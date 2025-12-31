@@ -11,7 +11,7 @@ param(
 
 # Color functions
 function Write-Success { Write-Host $args -ForegroundColor Green }
-function Write-Error { Write-Host $args -ForegroundColor Red }
+function Write-ErrorMsg { Write-Host $args -ForegroundColor Red }
 function Write-Warning { Write-Host $args -ForegroundColor Yellow }
 function Write-Info { Write-Host $args -ForegroundColor Cyan }
 
@@ -21,7 +21,7 @@ Write-Info "=========================================="
 
 # Validate inputs
 if (-not (Test-Path $KeyPath)) {
-    Write-Error "ERROR: Key file not found at: $KeyPath"
+    Write-ErrorMsg "ERROR: Key file not found at: $KeyPath"
     exit 1
 }
 
@@ -107,7 +107,7 @@ Invoke-Expression $sshCommand
 
 Write-Success ""
 Write-Success "=========================================="
-Write-Success "✓ Remote Deployment Successful!"
+Write-Success "Remote Deployment Successful!"
 Write-Success "=========================================="
 Write-Warning "Your application is now live at:"
 Write-Info "  http://$InstanceIP"
@@ -119,4 +119,5 @@ Write-Host "  3. Start using the portal"
 Write-Host ""
 Write-Warning "To view logs:"
 Write-Host "  ssh -i $KeyPath ubuntu@$InstanceIP"
-Write-Host "  cd unified-portal; docker-compose logs"
+Write-Host "  cd unified-portal"
+Write-Host "  docker-compose logs"
