@@ -1,13 +1,14 @@
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional, List, Any
+from pydantic import BaseModel, PlainValidator
+from typing import Optional, List, Any, Annotated
 from datetime import datetime
 from app.models import ServiceType, ApplicationStatus, DocumentType
 
+def email_validator(v):
+    return str(v)
+
 # Auth Schemas
 class UserCreate(BaseModel):
-    model_config = ConfigDict(validate_assignment=False)
-    
-    email: str = Field(..., description="Email address")
+    email: Annotated[str, PlainValidator(email_validator)]
     mobile: str
     password: str
     full_name: str
