@@ -40,7 +40,7 @@ const Login = () => {
           <Building className="w-6 h-6 text-green-400" />
         </div>
         <h1 className="text-2xl font-bold">Gujarat Unified Services Portal</h1>
-        <p className="text-blue-200 text-sm">ગુજરાત એકીકૃત સેવા પોર્ટલ</p>
+        <p className="text-blue-200 text-sm">गुजरात एकीकृत सेवा पोर्टल</p>
       </div>
 
       {/* Login Card */}

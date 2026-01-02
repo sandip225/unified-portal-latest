@@ -29,9 +29,9 @@ const PropertyForm = () => {
 
   const propertyTypes = ['Residential', 'Commercial', 'Agricultural', 'Industrial', 'Mixed Use'];
   const applicationTypes = [
-    { value: 'mutation', label: 'Mutation / Name Transfer (ફેરફાર)' },
+    { value: 'mutation', label: 'Mutation / Name Transfer (नाम स्थानांतरण)' },
     { value: 'noc', label: 'NOC Request' },
-    { value: '7_12_extract', label: '7/12 Extract (સાતબાર ઉતારા)' },
+    { value: '7_12_extract', label: '7/12 Extract (7/12 निकालना)' },
     { value: 'property_tax', label: 'Property Tax Name Change' }
   ];
 
@@ -162,7 +162,7 @@ const PropertyForm = () => {
 
             {/* District */}
             <div>
-              <label className="block text-gray-700 mb-1">District (જિલ્લો)<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700 mb-1">District (जिला)<span className="text-red-500">*</span></label>
               <select
                 name="district"
                 value={formData.district}
@@ -178,7 +178,7 @@ const PropertyForm = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 mb-1">Taluka (તાલુકો)<span className="text-red-500">*</span></label>
+                <label className="block text-gray-700 mb-1">Taluka (तहसील)<span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="taluka"
@@ -190,7 +190,7 @@ const PropertyForm = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-1">Village (ગામ)<span className="text-red-500">*</span></label>
+                <label className="block text-gray-700 mb-1">Village (गांव)<span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="village"
@@ -205,7 +205,7 @@ const PropertyForm = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 mb-1">Survey Number (સર્વે નંબર)<span className="text-red-500">*</span></label>
+                <label className="block text-gray-700 mb-1">Survey Number (सर्वे संख्या)<span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="survey_number"
@@ -245,7 +245,7 @@ const PropertyForm = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Current Owner Name (હાલના માલિકનું નામ)<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700 mb-1">Current Owner Name (वर्तमान मालिक का नाम)<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="current_owner_name"
@@ -258,7 +258,7 @@ const PropertyForm = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">New Owner Name (નવા માલિકનું નામ)<span className="text-red-500">*</span></label>
+              <label className="block text-gray-700 mb-1">New Owner Name (नए मालिक का नाम)<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="new_owner_name"
