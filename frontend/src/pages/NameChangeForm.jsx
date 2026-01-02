@@ -147,19 +147,19 @@ const NameChangeForm = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
+    <div className="w-full">
       {/* Back Button */}
       <button
         onClick={() => step === 1 ? navigate('/services') : setStep(step - 1)}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 px-6 pt-4"
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
       >
         <ArrowLeft className="w-5 h-5" /> 
         {step === 1 ? 'Back to Services' : 'Back'}
       </button>
 
       {/* Header */}
-      <div className={`bg-gradient-to-r ${gradient} p-6`}>
-        <div className="flex items-center gap-4 max-w-7xl mx-auto">
+      <div className={`bg-gradient-to-r ${gradient} p-6 -mx-6 -mt-6 mb-6`}>
+        <div className="flex items-center gap-4 max-w-7xl mx-auto px-6">
           <div className="bg-white/25 backdrop-blur-sm p-3 rounded-xl">
             <Icon className="w-8 h-8 text-white" />
           </div>
@@ -172,8 +172,7 @@ const NameChangeForm = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto p-6">
+      <div className="bg-white shadow-lg rounded-lg p-6">
         {/* Step Indicator */}
         <div className="flex items-center justify-center gap-4 mb-8">
           {[1, 2, 3].map((s) => (
@@ -506,7 +505,6 @@ const NameChangeForm = () => {
             </div>
           </div>
         )}
-        </div>
       </div>
     </div>
   );
