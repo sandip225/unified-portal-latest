@@ -14,19 +14,21 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine
+# Production stagex
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy builtnginx
 
-# Install serve to run the built app
-RUN npm install -g serve
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
+# Copy custom nginx confg
+nf
 
 # Expose port
-EXPOSE 3000
 
-# Run the application
-CMD ["serve", "-s", "dist", "-l", "3000"]
+
+# Health chk
+
+    CMD wget --quiet 
+
+ff;"]n o, "daemo "-g"nx","ngiinx
+CMD [# Run ng

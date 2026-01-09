@@ -4,27 +4,114 @@ A single portal to manage all utility services - Electricity, Gas, Water & Prope
 
 ---
 
-## 🚀 Quick Deploy to AWS
+## 🐳 Quick Start with Docker (Local)
 
-### 1. Set AWS Credentials
+### Prerequisites
+- Docker Desktop installed
+- 2GB RAM minimum
+
+### One-Command Deploy
 ```powershell
-$env:AWS_ACCESS_KEY_ID="your-key"
-$env:AWS_SECRET_ACCESS_KEY="your-secret"
+# Windows
+.\docker-start.ps1
+
+# Or manually
+docker-compose up -d
 ```
 
-### 2. Deploy Infrastructure
-```powershell
-.\terraform-deploy.ps1 -FullDeploy
+**Access Application:**
+- Frontend: http://localhost:3003
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+---
+
+## 🚀 Deploy to AWS EC2 with Docker
+
+### Step 1: Launch EC2 Instance
+```bash
+# Use AWS Console or CLI
+# Instance Type: t2.medium or larger
+# OS: Ubuntu 22.04 LTS
+# Security Group: Open ports 22, 80, 443, 3003, 8000
 ```
 
-### 3. Get Server IP & Connect
-```powershell
-cd terraform
-terraform output instance_public_ip
-ssh -i "gov-portal.pem" ubuntu@<YOUR_IP>
+### Step 2: Connect to EC2
+```bash
+ssh -i "your-key.pem" ubuntu@YOUR_EC2_IP
 ```
 
-**See AWS_DEPLOYMENT_GUIDE.md for complete setup.**
+### Step 3: Install Docker
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker ubuntu
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify installation
+docker --version
+docker-compose --version
+
+# Logout and login again for group changes
+exit
+```
+
+### Step 4: Clone and Deploy
+```bash
+# Reconnect to EC2
+ssh -i "your-key.pem" ubuntu@YOUR_EC2_IP
+
+# Clone repository
+git clone https://github.com/Vaidehip0407/unified-portal.git
+cd unified-portal
+
+# Create environment file
+cp .env.example .env
+nano .env  # Update SECRET_KEY and other configs
+
+# Generate secret key
+openssl rand -hex 32
+
+# Start services
+docker-compose up -d
+
+# Check status
+docker-compose ps
+docker-compose logs -f
+```
+
+### Step 5: Access Application
+```
+Frontend: http://YOUR_EC2_IP:3003
+Backend: http://YOUR_EC2_IP:8000
+API Docs: http://YOUR_EC2_IP:8000/docs
+```
+
+### Useful Commands
+```bash
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Stop services
+docker-compose down
+
+# Update and restart
+git pull
+docker-compose up -d --build
+
+# Backup database
+docker-compose exec backend cp unified_portal.db /app/data/backup.db
+```
 
 ---
 
@@ -41,120 +128,103 @@ ssh -i "gov-portal.pem" ubuntu@<YOUR_IP>
 - Auto-fill forms from stored data
 - RPA integration for external websites
 - Application tracking
+- WhatsApp integration for guided flow
 
 ## Tech Stack
 
-- **Backend**: Python FastAPI + PostgreSQL
+- **Backend**: Python FastAPI + SQLite
 - **Frontend**: React + Vite + Tailwind CSS
-- **OCR**: Google Vision API / AWS Textract
+- **Deployment**: Docker + Docker Compose
+- **OCR**: Tesseract OCR
 - **RPA**: Selenium for external form filling
-
-## Setup
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL
-
-### Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-venv\Scripts\activate  # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Create .env file
-copy .env.example .env
-# Edit .env with your database credentials
-
-# Run server
-uvicorn app.main:app --reload
-```
-
-### Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Run dev server
-npm run dev
-```
-
-### Database Setup
-
-```sql
-CREATE DATABASE unified_portal;
-```
-
-Tables are auto-created on first run.
-
-## API Endpoints
-
-### Auth
-- POST `/api/auth/register` - Register user
-- POST `/api/auth/login` - Login
-- GET `/api/auth/me` - Get current user
-
-### Users
-- PUT `/api/users/profile` - Update profile
-- POST `/api/users/documents/upload` - Upload document
-- GET `/api/users/autofill-data` - Get all data for auto-fill
-
-### Services
-- GET/POST `/api/services/electricity` - Electricity accounts
-- GET/POST `/api/services/gas` - Gas accounts
-- GET/POST `/api/services/water` - Water accounts
-- GET/POST `/api/services/property` - Property accounts
-
-### Applications
-- POST `/api/applications/` - Create application
-- GET `/api/applications/prefill/{service}/{type}` - Get prefill data
-- POST `/api/applications/{id}/submit` - Submit application
 
 ## Project Structure
 
 ```
 unified-portal/
-├── backend/
+├── backend/              # FastAPI backend
 │   ├── app/
-│   │   ├── main.py
-│   │   ├── config.py
-│   │   ├── database.py
-│   │   ├── models.py
-│   │   ├── schemas.py
-│   │   ├── auth.py
-│   │   ├── routers/
-│   │   │   ├── auth.py
-│   │   │   ├── users.py
-│   │   │   ├── services.py
-│   │   │   └── applications.py
-│   │   └── services/
-│   │       ├── ocr_service.py
-│   │       └── rpa_service.py
+│   │   ├── routers/     # API endpoints
+│   │   ├── services/    # Business logic
+│   │   ├── models.py    # Database models
+│   │   └── main.py      # App entry point
+│   ├── Dockerfile
 │   └── requirements.txt
-│
-└── frontend/
-    ├── src/
-    │   ├── App.jsx
-    │   ├── api/axios.js
-    │   ├── context/AuthContext.jsx
-    │   ├── components/Layout.jsx
-    │   └── pages/
-    │       ├── Login.jsx
-    │       ├── Register.jsx
-    │       ├── Dashboard.jsx
-    │       ├── Profile.jsx
-    │       ├── Documents.jsx
-    │       ├── Services.jsx
-    │       ├── Applications.jsx
-    │       └── NameChangeForm.jsx
-    └── package.json
+├── frontend/            # React frontend
+│   ├── src/
+│   │   ├── pages/      # Page components
+│   │   ├── components/ # Reusable components
+│   │   └── App.jsx     # Main app
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.yml   # Docker orchestration
+└── README.md
 ```
+
+## Development
+
+### Local Development (Without Docker)
+
+**Backend:**
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### With Docker
+```bash
+docker-compose up
+```
+
+## Environment Variables
+
+Create `.env` file from `.env.example`:
+
+```env
+# Backend
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=sqlite:///./unified_portal.db
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Frontend
+VITE_API_URL=http://localhost:8000
+```
+
+## API Documentation
+
+Once running, visit:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For issues and questions:
+- GitHub Issues: https://github.com/Vaidehip0407/unified-portal/issues
+- Email: support@example.com
+
+---
+
+**Built with ❤️ for Digital Gujarat Initiative**
