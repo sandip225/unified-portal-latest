@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Layout from './components/Layout';
+import ResponsiveLayout from './components/ResponsiveLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -10,6 +10,9 @@ import Services from './pages/Services';
 import Applications from './pages/Applications';
 import NameChangeForm from './pages/NameChangeForm';
 import RPADemo from './pages/RPADemo';
+import OfflineIndicator from './components/OfflineIndicator';
+import InstallPWA from './components/InstallPWA';
+import './registerSW';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -35,13 +38,15 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
+      <OfflineIndicator />
+      <InstallPWA />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={
             <ProtectedRoute>
-              <Layout />
+              <ResponsiveLayout />
             </ProtectedRoute>
           }>
             <Route index element={<Dashboard />} />
