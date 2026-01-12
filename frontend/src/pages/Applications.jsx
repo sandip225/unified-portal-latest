@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { FileText, Clock, CheckCircle, XCircle, AlertCircle, ArrowRight, MessageCircle, Filter } from 'lucide-react';
+import { FileText, Clock, CheckCircle, XCircle, AlertCircle, ArrowRight, MessageCircle, Filter, Plus } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
