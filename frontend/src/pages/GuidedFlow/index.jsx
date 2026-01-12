@@ -196,6 +196,8 @@ const GuidedFlowPage = () => {
               estimatedTime={submissionResult?.estimated_time}
               onTrackApplication={handleTrackApplication}
               onNewApplication={startNewApplication}
+              portalUrl={selectedProvider?.name_change_url || selectedProvider?.portal_url}
+              providerName={selectedProvider?.name}
             />
           </div>
         );

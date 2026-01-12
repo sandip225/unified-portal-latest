@@ -1,4 +1,4 @@
-import { CheckCircle, Copy, FileSearch, RefreshCw } from 'lucide-react';
+import { CheckCircle, Copy, FileSearch, RefreshCw, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 
 const ConfirmationScreen = ({ 
@@ -7,7 +7,9 @@ const ConfirmationScreen = ({
   messageHindi,
   estimatedTime,
   onTrackApplication,
-  onNewApplication 
+  onNewApplication,
+  portalUrl,
+  providerName
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -66,6 +68,32 @@ const ConfirmationScreen = ({
 
         {/* Action Buttons */}
         <div className="space-y-3">
+          {/* Submit & Open Portal Button */}
+          {portalUrl && (
+            <>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
+                <p className="flex items-center gap-2">
+                  <span className="text-lg">✅</span>
+                  <span>
+                    <strong>Online Portal Available:</strong> After clicking below, the official {providerName} portal will open. Your data will be saved for tracking.
+                  </span>
+                </p>
+                <p className="text-xs mt-1 text-green-600">
+                  ऑनलाइन पोर्टल उपलब्ध: नीचे क्लिक करने के बाद, आधिकारिक {providerName} पोर्टल खुल जाएगा। आपका डेटा ट्रैकिंग के लिए सहेजा जाएगा।
+                </p>
+              </div>
+              
+              <button
+                onClick={() => window.open(portalUrl, '_blank')}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.02] transition-all"
+              >
+                <ExternalLink className="w-5 h-5" />
+                Submit & Open {providerName} Portal
+                <span className="text-sm opacity-80">पोर्टल खोलें</span>
+              </button>
+            </>
+          )}
+
           <button
             onClick={onTrackApplication}
             className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.02] transition-all"
