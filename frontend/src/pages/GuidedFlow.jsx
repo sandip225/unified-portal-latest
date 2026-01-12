@@ -111,52 +111,83 @@ const GuidedFlow = () => {
   return (
     <div className="p-4">
       <div className="max-w-3xl mx-auto">
-        {/* Progress Bar */}
+        {/* Progress Bar - Modern Design */}
         {currentStep !== 'welcome' && (
-          <div className="bg-white rounded-lg shadow p-4 mb-4">
-            <div className="flex items-center justify-between">
-              {[1, 2, 3, 4, 5].map((step) => (
-                <div key={step} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    step < getStepNumber() ? 'bg-green-500 text-white' :
-                    step === getStepNumber() ? 'bg-orange-500 text-white' :
-                    'bg-gray-200 text-gray-500'
+          <div className="bg-white rounded-xl shadow-sm p-4 mb-4 border border-gray-100">
+            <div className="flex items-center justify-between relative">
+              {/* Progress Line Background */}
+              <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200" style={{ zIndex: 0 }} />
+              <div 
+                className="absolute top-4 left-0 h-0.5 bg-gradient-to-r from-green-500 to-orange-500 transition-all duration-500" 
+                style={{ 
+                  width: `${((getStepNumber() - 1) / 4) * 100}%`,
+                  zIndex: 1 
+                }} 
+              />
+              
+              {/* Step Circles */}
+              {[
+                { num: 1, label: 'Start', icon: '🚀' },
+                { num: 2, label: 'Service', icon: '⚡' },
+                { num: 3, label: 'Provider', icon: '🏢' },
+                { num: 4, label: 'Details', icon: '📝' },
+                { num: 5, label: 'Done', icon: '✅' }
+              ].map((step, idx) => (
+                <div key={step.num} className="flex flex-col items-center relative" style={{ zIndex: 2 }}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                    step.num < getStepNumber() 
+                      ? 'bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg scale-110' 
+                      : step.num === getStepNumber() 
+                      ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg scale-125 animate-pulse' 
+                      : 'bg-white border-2 border-gray-300 text-gray-400'
                   }`}>
-                    {step < getStepNumber() ? '✓' : step}
+                    {step.num < getStepNumber() ? '✓' : step.icon}
                   </div>
-                  {step < 5 && (
-                    <div className={`w-12 h-1 mx-1 ${
-                      step < getStepNumber() ? 'bg-green-500' : 'bg-gray-200'
-                    }`} />
-                  )}
+                  <span className={`text-xs mt-1 font-medium ${
+                    step.num <= getStepNumber() ? 'text-gray-700' : 'text-gray-400'
+                  }`}>
+                    {step.label}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Main Content */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white">
-            <div className="flex items-center gap-2">
+        {/* Main Content - Modern Card Design */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+          {/* Header - Gradient with Glass Effect */}
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 text-white relative overflow-hidden">
+            {/* Animated Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="absolute bottom-0 right-0 w-40 h-40 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
+            </div>
+            
+            <div className="flex items-center gap-2 relative z-10">
               {currentStep !== 'welcome' && currentStep !== 'confirmation' && (
-                <button onClick={goBack} className="p-1.5 hover:bg-white/20 rounded-lg transition-colors">
+                <button 
+                  onClick={goBack} 
+                  className="p-2 hover:bg-white/20 rounded-lg transition-all hover:scale-110"
+                >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               )}
-              <div className="bg-white/20 p-2 rounded-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-xl">
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-bold">Gujarat Citizen Helper</h2>
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  Gujarat Citizen Helper
+                  <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">AI</span>
+                </h2>
                 <p className="text-xs text-blue-100">गुजरात नागरिक सेवा सहायक</p>
               </div>
             </div>
           </div>
 
-          {/* Chat Area */}
-          <div className="p-4 min-h-[300px]">
+          {/* Chat Area - Modern Spacing */}
+          <div className="p-4 min-h-[300px] bg-gradient-to-b from-gray-50 to-white">
             {/* Welcome Screen */}
             {currentStep === 'welcome' && (
               <div className="text-center py-8">
@@ -212,7 +243,7 @@ const GuidedFlow = () => {
               </div>
             )}
 
-            {/* Service Selection */}
+            {/* Service Selection - Modern Cards */}
             {currentStep === 'service-select' && (
               <div className="grid grid-cols-2 gap-3 mt-4">
                 {services.map((service) => {
@@ -221,46 +252,74 @@ const GuidedFlow = () => {
                     <button
                       key={service.id}
                       onClick={() => handleServiceSelect(service)}
-                      className="p-4 rounded-lg border-2 border-gray-200 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+                      className="relative p-5 rounded-2xl border-2 border-gray-200 hover:border-transparent hover:shadow-2xl transition-all text-center group overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
+                      }}
                     >
-                      <div className={`w-12 h-12 ${service.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
-                        <Icon className="w-6 h-6 text-white" />
+                      {/* Hover Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      
+                      <div className="relative z-10">
+                        <div className={`w-14 h-14 ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg`}>
+                          <Icon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-base font-bold text-gray-800 group-hover:text-blue-600 transition-colors">{service.name}</h3>
+                        <p className="text-sm text-gray-600">{service.nameHindi}</p>
+                        <div className="mt-2 inline-block px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full font-medium">
+                          Apply Now →
+                        </div>
                       </div>
-                      <h3 className="text-base font-bold text-gray-800">{service.name}</h3>
-                      <p className="text-sm text-gray-600">{service.nameHindi}</p>
                     </button>
                   );
                 })}
               </div>
             )}
 
-            {/* Provider Selection */}
+            {/* Provider Selection - Modern List */}
             {currentStep === 'provider-select' && selectedCategory && (
               <div className="mt-4">
-                <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-xs text-gray-600">Selected Service:</p>
-                  <p className="text-sm font-bold text-blue-600">
+                <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                  <p className="text-xs text-gray-600 mb-1">Selected Service:</p>
+                  <p className="text-base font-bold text-blue-600 flex items-center gap-2">
                     {selectedCategory.name} ({selectedCategory.nameHindi})
+                    <span className="text-xs bg-blue-100 px-2 py-0.5 rounded-full">Step 3/5</span>
                   </p>
                 </div>
                 {currentProviders.length === 0 ? (
-                  <div className="text-center py-4">
-                    <p className="text-gray-500">Loading providers...</p>
+                  <div className="text-center py-8">
+                    <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+                    <p className="text-gray-500 text-sm">Loading providers...</p>
                   </div>
                 ) : (
-                  <div className="grid gap-2">
-                    {currentProviders.map((provider) => (
+                  <div className="space-y-2">
+                    {currentProviders.map((provider, idx) => (
                       <button
                         key={provider.id}
                         onClick={() => handleProviderSelect(provider.name)}
-                        className="p-3 rounded-lg border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left flex items-center justify-between group"
+                        className="w-full p-4 rounded-xl border-2 border-gray-200 hover:border-orange-400 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all text-left flex items-center justify-between group shadow-sm hover:shadow-md"
+                        style={{ animationDelay: `${idx * 50}ms` }}
                       >
-                        <div>
-                          <h3 className="text-sm font-bold text-gray-800 group-hover:text-orange-600">{provider.name}</h3>
-                          <p className="text-xs text-gray-500">{provider.type === 'government' ? '🏛️ Government' : '🏢 Private'}</p>
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                            provider.type === 'government' 
+                              ? 'bg-gradient-to-br from-blue-100 to-blue-200' 
+                              : 'bg-gradient-to-br from-purple-100 to-purple-200'
+                          }`}>
+                            {provider.type === 'government' ? '🏛️' : '🏢'}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-gray-800 group-hover:text-orange-600 transition-colors">
+                              {provider.name}
+                            </h3>
+                            <p className="text-xs text-gray-500">
+                              {provider.type === 'government' ? 'Government' : 'Private'} • 
+                              {provider.online_available ? ' Online Available' : ' Offline Only'}
+                            </p>
+                          </div>
                         </div>
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <span className="text-green-600 text-sm font-bold">→</span>
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow">
+                          <span className="text-white text-sm font-bold">→</span>
                         </div>
                       </button>
                     ))}
