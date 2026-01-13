@@ -1,6 +1,7 @@
 """
 DGVCL Name Change RPA - PRODUCTION SAFE MODE
 ✅ Fills Applicant Details (Step 1 only)
+✅ Captures screenshots
 ❌ Does NOT upload documents
 ❌ Does NOT proceed to payment
 ❌ Does NOT submit application
@@ -13,6 +14,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 import time
 import sys
+import json
+from pathlib import Path
 
 # ⚠️ CRITICAL SAFETY SETTINGS
 SAFETY_MODE = True
@@ -23,21 +26,33 @@ NO_SUBMIT = True
 
 class DGVCLNameChangeRPA:
     """
-    DGVCL Name Change - SAFE MODE
+    DGVCL Name Change - SAFE MODE with Screenshot Capture
     Only fills Step 1 (Applicant Details)
     User must complete Steps 2-4 manually
     """
     
-    def __init__(self):
+    def __init__(self, headless=True, screenshot_dir="/tmp/dgvcl_screenshots"):
         self.driver = None
         self.wait = None
         self.portal_url = "https://portal.guvnl.in"
         self.name_change_url = "https://portal.guvnl.in/ltNameChange.php?apptype=namechange"
+        self.headless = headless
+        self.screenshot_dir = Path(screenshot_dir)
+        self.screenshot_dir.mkdir(exist_ok=True)
+        self.screenshots = []
         
     def setup_browser(self):
-        """Setup Chrome browser - visible for user monitoring"""
+        """Setup Chrome browser - headless for server"""
         options = Options()
+        
+        if self.headless:
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--disable-gpu')
+        
         options.add_argument('--start-maximized')
+        options.add_argument('--window-size=1920,1080')
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
@@ -45,7 +60,19 @@ class DGVCLNameChangeRPA:
         self.driver = webdriver.Chrome(options=options)
         self.wait = WebDriverWait(self.driver, 30)
         
-        print("✅ Browser opened - You can monitor the process")
+        print("✅ Browser opened in headless mode")
+    
+    def take_screenshot(self, name):
+        """Take screenshot and save"""
+        try:
+            screenshot_path = self.screenshot_dir / f"{name}_{int(time.time())}.png"
+            self.driver.save_screenshot(str(screenshot_path))
+            self.screenshots.append(str(screenshot_path))
+            print(f"📸 Screenshot saved: {screenshot_path}")
+            return str(screenshot_path)
+        except Exception as e:
+            print(f"⚠️ Screenshot failed: {e}")
+            return None
         
     def login_to_portal(self, mobile_number, discom="DGVCL"):
         """
@@ -56,14 +83,12 @@ class DGVCLNameChangeRPA:
         self.driver.get(f"{self.portal_url}/login.php")
         time.sleep(3)
         
-        print("🔐 Logging in with Mobile Number + OTP...")
+        # Take screenshot of login page
+        self.take_screenshot("01_login_page")
+        
+        print("🔐 Filling login form...")
         
         try:
-            # Check if already logged in
-            if "welcome" in self.driver.page_source.lower() or "dashboard" in self.driver.page_source.lower():
-                print("✅ Already logged in")
-                return True
-            
             # Mobile Number field
             mobile_field = self.wait.until(
                 EC.presence_of_element_located((By.ID, "mobile"))
@@ -78,44 +103,25 @@ class DGVCLNameChangeRPA:
                 discom_dropdown.select_by_visible_text(discom)
                 print(f"✅ DISCOM: {discom}")
             except Exception as e:
-                print(f"⚠️  DISCOM dropdown: {e}")
+                print(f"⚠️ DISCOM dropdown: {e}")
             
-            # Captcha - User must enter manually
-            print("\n⏸️  Please enter the CAPTCHA on the portal")
-            input("⏸️  Press ENTER after entering CAPTCHA...")
+            time.sleep(2)
             
-            # Click Login button to get OTP
-            try:
-                login_btn = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Login') or @type='submit']")
-                login_btn.click()
-                print("✅ Login button clicked - OTP should be sent")
-            except Exception as e:
-                print(f"⚠️  Login button: {e}")
-                print("💡 Please click Login button manually")
+            # Take screenshot after filling
+            self.take_screenshot("02_login_filled")
             
-            time.sleep(3)
+            print("\n✅ Login form filled successfully!")
+            print("⏸️ Bot will stop here - User must:")
+            print("  1. Enter Captcha")
+            print("  2. Click Login")
+            print("  3. Enter OTP")
             
-            # Wait for OTP entry
-            print("\n📱 OTP sent to: {mobile_number}")
-            print("⏸️  Please enter OTP on the portal")
-            input("⏸️  Press ENTER after entering OTP and completing login...")
-            
-            time.sleep(3)
-            
-            # Verify login
-            if "welcome" in self.driver.page_source.lower() or "dashboard" in self.driver.page_source.lower():
-                print("✅ Login successful")
-                return True
-            else:
-                print("⚠️  Verifying login status...")
-                input("⏸️  Press ENTER after successful login...")
-                return True
+            return True
                 
         except Exception as e:
-            print(f"⚠️  Login error: {e}")
-            print(f"💡 Please login manually using mobile: {mobile_number}")
-            input("⏸️  Press ENTER after manual login...")
-            return True
+            print(f"⚠️ Login error: {e}")
+            self.take_screenshot("error_login")
+            return False
     
     def navigate_to_name_change(self):
         """Navigate to LT Name Change page using direct URL"""
@@ -242,54 +248,55 @@ class DGVCLNameChangeRPA:
     def run(self, data):
         """
         Main execution flow
-        ⚠️ SAFE MODE: Only fills Step 1
+        ⚠️ SAFE MODE: Only fills login form and captures screenshots
         """
         try:
             print("\n" + "="*70)
-            print("🚀 DGVCL NAME CHANGE RPA - SAFE MODE")
+            print("🚀 DGVCL RPA BOT - HEADLESS MODE WITH SCREENSHOTS")
             print("="*70)
-            print("⚠️  SAFETY ENABLED:")
-            print("  • Will ONLY fill Step 1 (Applicant Details)")
-            print("  • Will NOT upload documents")
-            print("  • Will NOT make payment")
-            print("  • Will NOT submit application")
-            print("  • User must complete Steps 2-4 manually")
+            print("⚠️ SAFETY ENABLED:")
+            print("  • Fills login form only")
+            print("  • Captures screenshots")
+            print("  • User completes captcha & OTP manually")
             print("="*70)
             
             # Setup
             self.setup_browser()
             
-            # Login
+            # Login (fill form only)
             self.login_to_portal(
                 data.get('mobile_number'),
                 data.get('discom', 'DGVCL')
             )
             
-            # Navigate to Name Change
-            self.navigate_to_name_change()
+            # Final screenshot
+            self.take_screenshot("03_final_state")
             
-            # Fill Step 1 only
-            self.fill_applicant_details(data)
+            print("\n✅ RPA bot completed!")
+            print(f"📸 Screenshots saved: {len(self.screenshots)}")
+            for screenshot in self.screenshots:
+                print(f"  - {screenshot}")
             
-            # Show completion message
-            self.show_completion_message()
-            
-            print("\n✅ RPA process completed safely")
-            print("🔒 No data was submitted to DGVCL")
-            
-        except KeyboardInterrupt:
-            print("\n\n⚠️  Process interrupted by user")
-            print("💡 Browser will stay open for manual completion")
-            time.sleep(300)
+            # Return results
+            return {
+                "success": True,
+                "screenshots": self.screenshots,
+                "message": "Login form filled. User must complete captcha and OTP."
+            }
             
         except Exception as e:
             print(f"\n❌ Error: {e}")
-            print("💡 Browser will stay open for manual completion")
-            time.sleep(300)
+            self.take_screenshot("error_final")
+            return {
+                "success": False,
+                "screenshots": self.screenshots,
+                "error": str(e)
+            }
             
         finally:
             if self.driver:
                 print("\n👋 Closing browser...")
+                time.sleep(2)
                 self.driver.quit()
 
 
@@ -307,7 +314,6 @@ if __name__ == "__main__":
             
             print("\n✅ Data loaded from backend")
             print(f"  Mobile: {dgvcl_data.get('mobile')}")
-            print(f"  Consumer No: {dgvcl_data.get('consumer_number')}")
             print(f"  DISCOM: {dgvcl_data.get('discom', 'DGVCL')}")
             
             # Map backend data to RPA format
@@ -316,40 +322,22 @@ if __name__ == "__main__":
                 'discom': dgvcl_data.get('discom', 'DGVCL'),
                 'consumer_no': dgvcl_data.get('consumer_number'),
                 'new_name': dgvcl_data.get('applicant_name', ''),
-                'reason': 'Name Correction',
-                'security_deposit_option': 'entire'
             }
             
-            rpa = DGVCLNameChangeRPA()
-            rpa.run(rpa_data)
+            rpa = DGVCLNameChangeRPA(headless=True)
+            result = rpa.run(rpa_data)
+            
+            # Save result
+            result_file = Path("/tmp/dgvcl_rpa_result.json")
+            with open(result_file, 'w') as f:
+                json.dump(result, f)
+            
+            print(f"\n✅ Result saved: {result_file}")
             
         except Exception as e:
-            print(f"❌ Error loading data: {e}")
+            print(f"❌ Error: {e}")
             sys.exit(1)
     else:
-        # Manual mode - use hardcoded data
-        dgvcl_data = {
-            'mobile_number': '9870083162',  # Login mobile number
-            'discom': 'DGVCL',  # DISCOM selection
-            'consumer_no': '08267002294',
-            'new_name': 'PANCHAL SANJAY GANPATBHAI',  # Example new name
-            'reason': 'Name Correction',  # Or other reason from dropdown
-            'security_deposit_option': 'entire'  # or 'difference'
-        }
-        
-        print("\n⚠️  WARNING: PRODUCTION MODE")
-        print("✅ Will use REAL DGVCL account")
-        print("✅ Will ONLY fill Step 1")
-        print("❌ Will NOT submit application")
-        print("\nData to be used:")
-        print(f"  Mobile: {dgvcl_data['mobile_number']}")
-        print(f"  Consumer No: {dgvcl_data['consumer_no']}")
-        print(f"  New Name: {dgvcl_data['new_name']}")
-        
-        confirm = input("\n❓ Continue with REAL data? (yes/no): ")
-        
-        if confirm.lower() == 'yes':
-            rpa = DGVCLNameChangeRPA()
-            rpa.run(dgvcl_data)
-        else:
-            print("❌ Cancelled - No action taken")
+        print("❌ No data file provided")
+        print("Usage: python dgvcl_name_change_final.py <data_file.json>")
+        sys.exit(1)

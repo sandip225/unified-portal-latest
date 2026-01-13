@@ -23,6 +23,7 @@ class RPAResponse(BaseModel):
     message: str
     session_id: Optional[str] = None
     portal_url: Optional[str] = None
+    screenshots: Optional[list] = None
 
 # Store active RPA sessions
 active_sessions = {}
@@ -70,14 +71,21 @@ async def trigger_dgvcl_autofill(
         with open(temp_file, "w") as f:
             json.dump(rpa_data, f)
         
-        # Run RPA bot in background
-        background_tasks.add_task(run_rpa_bot, str(rpa_script), str(temp_file))
+        # Run RPA bot (synchronous for now to get screenshots)
+        rpa_result = run_rpa_bot(str(rpa_script), str(temp_file))
         
-        return RPAResponse(
-            success=True,
-            message="RPA bot started! Browser will open automatically and fill the form.",
-            portal_url="https://portal.guvnl.in/login.php"
-        )
+        if rpa_result.get("success"):
+            return RPAResponse(
+                success=True,
+                message="Login form filled! Check screenshots below. Complete captcha & OTP on portal.",
+                portal_url="https://portal.guvnl.in/login.php",
+                screenshots=rpa_result.get("screenshots", [])
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"RPA bot failed: {rpa_result.get('error', 'Unknown error')}"
+            )
         
     except Exception as e:
         raise HTTPException(
@@ -86,26 +94,37 @@ async def trigger_dgvcl_autofill(
         )
 
 def run_rpa_bot(script_path: str, data_file: str):
-    """Run RPA bot in background"""
+    """Run RPA bot in background and return screenshots"""
     try:
         # Run Python script
         result = subprocess.run(
             ["python3", script_path, data_file],
             capture_output=True,
             text=True,
-            timeout=300  # 5 minutes timeout
+            timeout=60  # 1 minute timeout (faster for login only)
         )
         
         if result.returncode == 0:
             print(f"✅ RPA bot completed successfully")
             print(result.stdout)
+            
+            # Read result file
+            result_file = Path("/tmp/dgvcl_rpa_result.json")
+            if result_file.exists():
+                with open(result_file, 'r') as f:
+                    rpa_result = json.load(f)
+                print(f"📸 Screenshots: {rpa_result.get('screenshots', [])}")
+                return rpa_result
         else:
             print(f"❌ RPA bot failed: {result.stderr}")
+            return {"success": False, "error": result.stderr}
             
     except subprocess.TimeoutExpired:
-        print("⏰ RPA bot timeout after 5 minutes")
+        print("⏰ RPA bot timeout after 1 minute")
+        return {"success": False, "error": "Timeout"}
     except Exception as e:
         print(f"❌ RPA bot error: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 @router.get("/dgvcl/status/{session_id}")
 async def get_rpa_status(session_id: str):

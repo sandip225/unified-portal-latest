@@ -13,11 +13,18 @@ const ConfirmationScreen = ({
   formData
 }) => {
   const [copied, setCopied] = useState(false);
+  const [copiedField, setCopiedField] = useState('');
 
   const copyTrackingId = () => {
     navigator.clipboard.writeText(trackingId);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(''), 2000);
   };
 
   const handleOpenPortal = () => {
@@ -84,28 +91,82 @@ const ConfirmationScreen = ({
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          {/* Submit & Open Portal Button */}
-          {portalUrl && (
+          {/* DGVCL Portal Instructions */}
+          {portalUrl && formData && (
             <>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
-                <p className="flex items-center gap-2">
-                  <span className="text-lg">✅</span>
-                  <span>
-                    <strong>Online Portal Available:</strong> After clicking below, the official {providerName} portal will open. Your data will be saved for tracking.
-                  </span>
-                </p>
-                <p className="text-xs mt-1 text-green-600">
-                  ऑनलाइन पोर्टल उपलब्ध: नीचे क्लिक करने के बाद, आधिकारिक {providerName} पोर्टल खुल जाएगा। आपका डेटा ट्रैकिंग के लिए सहेजा जाएगा।
-                </p>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-4 mb-4">
+                <h3 className="font-bold text-blue-800 mb-3 flex items-center gap-2">
+                  <span className="text-xl">📋</span>
+                  Fill these details on {providerName} Portal:
+                </h3>
+                
+                {/* Mobile Number */}
+                <div className="bg-white rounded-lg p-3 mb-2 flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500">Mobile Number / मोबाइल नंबर</p>
+                    <p className="text-lg font-bold text-gray-800">{formData.mobile}</p>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(formData.mobile, 'mobile')}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all flex items-center gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    {copiedField === 'mobile' ? '✓ Copied!' : 'Copy'}
+                  </button>
+                </div>
+
+                {/* Discom Selection */}
+                <div className="bg-white rounded-lg p-3 mb-2 flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500">Select Discom / डिस्कॉम चुनें</p>
+                    <p className="text-lg font-bold text-orange-600">{providerName}</p>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(providerName, 'discom')}
+                    className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all flex items-center gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    {copiedField === 'discom' ? '✓ Copied!' : 'Copy'}
+                  </button>
+                </div>
+
+                {/* Consumer Number (if available) */}
+                {formData.consumer_number && (
+                  <div className="bg-white rounded-lg p-3 mb-3 flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Consumer Number / उपभोक्ता संख्या</p>
+                      <p className="text-lg font-bold text-gray-800">{formData.consumer_number}</p>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(formData.consumer_number, 'consumer')}
+                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all flex items-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" />
+                      {copiedField === 'consumer' ? '✓ Copied!' : 'Copy'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Instructions */}
+                <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm">
+                  <p className="font-semibold text-yellow-800 mb-2">📝 Next Steps:</p>
+                  <ol className="list-decimal list-inside space-y-1 text-yellow-700">
+                    <li>Click "Open {providerName} Portal" button below</li>
+                    <li>Paste Mobile Number (use Copy button above)</li>
+                    <li>Select "{providerName}" from dropdown</li>
+                    <li>Enter Captcha and click Login</li>
+                    <li>Enter OTP sent to your mobile</li>
+                  </ol>
+                </div>
               </div>
               
               <button
                 onClick={handleOpenPortal}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.02] transition-all"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:shadow-xl hover:scale-[1.02] transition-all animate-pulse"
               >
-                <ExternalLink className="w-5 h-5" />
-                Submit & Open {providerName} Portal
-                <span className="text-sm opacity-80">पोर्टल खोलें</span>
+                <ExternalLink className="w-6 h-6" />
+                Open {providerName} Portal Now
+                <span className="text-sm opacity-90">अभी पोर्टल खोलें</span>
               </button>
             </>
           )}
