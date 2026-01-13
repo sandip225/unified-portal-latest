@@ -39,8 +39,9 @@ async def trigger_dgvcl_autofill(
     try:
         # Get RPA script path - check multiple locations
         rpa_script_paths = [
-            Path(__file__).parent.parent / "rpa-automation" / "dgvcl_name_change_final.py",  # In backend folder
-            Path(__file__).parent.parent.parent.parent / "rpa-automation" / "dgvcl_name_change_final.py",  # Root folder
+            Path("/app/rpa-automation/dgvcl_name_change_final.py"),  # Docker absolute path
+            Path(__file__).parent.parent / "rpa-automation" / "dgvcl_name_change_final.py",  # Relative to app
+            Path(__file__).parent.parent.parent / "rpa-automation" / "dgvcl_name_change_final.py",  # Root
         ]
         
         rpa_script = None
