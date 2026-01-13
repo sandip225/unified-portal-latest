@@ -343,9 +343,28 @@ function autoFillOnLoad() {
   // Check if we're on DGVCL portal and have data
   if (window.location.hostname === 'portal.guvnl.in') {
     console.log('🔍 Extension: Checking for stored data...');
+    
+    // Method 1: Check URL hash
+    if (window.location.hash.includes('autofill=')) {
+      try {
+        const hashData = window.location.hash.split('autofill=')[1];
+        const decoded = atob(hashData);
+        const data = JSON.parse(decoded);
+        console.log('📦 Extension: Found data in URL hash:', data);
+        
+        setTimeout(() => {
+          fillFormWithData(data);
+        }, 1500);
+        return;
+      } catch (e) {
+        console.error('❌ Extension: Error parsing URL hash:', e);
+      }
+    }
+    
+    // Method 2: Check localStorage (fallback)
     try {
       const storedData = localStorage.getItem('dgvcl_autofill_data');
-      console.log('📦 Extension: Found data:', storedData);
+      console.log('📦 Extension: Checking localStorage:', storedData);
       
       if (storedData) {
         const data = JSON.parse(storedData);
@@ -354,17 +373,9 @@ function autoFillOnLoad() {
         // Check if data is fresh (less than 5 minutes old)
         if (Date.now() - data.timestamp < 5 * 60 * 1000) {
           console.log('✅ Extension: Data is fresh, auto-filling...');
-          // Wait for page to fully load
           setTimeout(() => {
-            fillForm().then(result => {
-              if (result.success) {
-                console.log('✅ Extension: Auto-filled successfully!');
-                showNotification(`Auto-filled ${result.filledCount} fields for ${data.provider}`);
-              } else {
-                console.error('❌ Extension: Auto-fill failed:', result.message);
-              }
-            });
-          }, 1500); // Wait 1.5 seconds for page elements to load
+            fillFormWithData(data);
+          }, 1500);
         } else {
           console.warn('⚠️ Extension: Data expired (older than 5 minutes)');
           localStorage.removeItem('dgvcl_autofill_data');
@@ -376,4 +387,65 @@ function autoFillOnLoad() {
       console.error('❌ Extension: Error in auto-fill:', e);
     }
   }
+}
+
+// Helper function to fill form with data
+function fillFormWithData(data) {
+  console.log('🚀 Extension: Starting auto-fill with data:', data);
+  
+  // Fill mobile number
+  const mobileSelectors = [
+    'input[id="mobile"]',
+    'input[name="mobile"]',
+    'input[placeholder*="Mobile"]',
+    'input[type="text"]'
+  ];
+  
+  for (const selector of mobileSelectors) {
+    const field = document.querySelector(selector);
+    if (field) {
+      field.value = data.mobile;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log('✅ Extension: Filled mobile number:', data.mobile);
+      
+      // Highlight field
+      field.style.backgroundColor = '#e8f5e9';
+      setTimeout(() => {
+        field.style.backgroundColor = '';
+      }, 2000);
+      break;
+    }
+  }
+  
+  // Fill DISCOM dropdown
+  const discomSelectors = [
+    'select[id="discom"]',
+    'select[name="discom"]',
+    'select.form-control'
+  ];
+  
+  for (const selector of discomSelectors) {
+    const dropdown = document.querySelector(selector);
+    if (dropdown) {
+      const options = Array.from(dropdown.options);
+      const option = options.find(opt => 
+        opt.text.includes(data.provider) || opt.value.includes(data.provider)
+      );
+      if (option) {
+        dropdown.value = option.value;
+        dropdown.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log('✅ Extension: Selected DISCOM:', data.provider);
+        
+        // Highlight field
+        dropdown.style.backgroundColor = '#e8f5e9';
+        setTimeout(() => {
+          dropdown.style.backgroundColor = '';
+        }, 2000);
+      }
+      break;
+    }
+  }
+  
+  showNotification(`Auto-filled mobile & ${data.provider}!`);
 }

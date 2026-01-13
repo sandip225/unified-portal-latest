@@ -28,7 +28,7 @@ const ConfirmationScreen = ({
   };
 
   const handleOpenPortal = () => {
-    // Store form data in localStorage for chrome extension to use
+    // Store form data for chrome extension to use
     if (formData) {
       const dataToStore = {
         mobile: formData.mobile,
@@ -38,18 +38,32 @@ const ConfirmationScreen = ({
       };
       
       console.log('🔵 Storing data for extension:', dataToStore);
+      
+      // Store in localStorage (for same domain)
       localStorage.setItem('dgvcl_autofill_data', JSON.stringify(dataToStore));
       
-      // Verify it was stored
-      const stored = localStorage.getItem('dgvcl_autofill_data');
-      console.log('✅ Data stored in localStorage:', stored);
+      // Also try to send to extension via postMessage
+      window.postMessage({
+        type: 'DGVCL_AUTOFILL_DATA',
+        data: dataToStore
+      }, '*');
+      
+      // Store in sessionStorage as backup
+      sessionStorage.setItem('dgvcl_autofill_data', JSON.stringify(dataToStore));
+      
+      console.log('✅ Data stored in localStorage and sent to extension');
     } else {
       console.error('❌ No formData available!');
     }
     
-    // Open portal in new tab
-    console.log('🌐 Opening portal:', portalUrl);
-    window.open(portalUrl, '_blank');
+    // Open portal in new tab with data in URL hash (as backup)
+    const dataParam = formData ? `#autofill=${btoa(JSON.stringify({
+      mobile: formData.mobile,
+      provider: providerName
+    }))}` : '';
+    
+    console.log('🌐 Opening portal:', portalUrl + dataParam);
+    window.open(portalUrl + dataParam, '_blank');
   };
 
   return (
