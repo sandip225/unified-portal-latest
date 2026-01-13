@@ -342,24 +342,38 @@ if (document.readyState === 'loading') {
 function autoFillOnLoad() {
   // Check if we're on DGVCL portal and have data
   if (window.location.hostname === 'portal.guvnl.in') {
+    console.log('🔍 Extension: Checking for stored data...');
     try {
       const storedData = localStorage.getItem('dgvcl_autofill_data');
+      console.log('📦 Extension: Found data:', storedData);
+      
       if (storedData) {
         const data = JSON.parse(storedData);
+        console.log('📋 Extension: Parsed data:', data);
+        
         // Check if data is fresh (less than 5 minutes old)
         if (Date.now() - data.timestamp < 5 * 60 * 1000) {
+          console.log('✅ Extension: Data is fresh, auto-filling...');
           // Wait for page to fully load
           setTimeout(() => {
             fillForm().then(result => {
               if (result.success) {
+                console.log('✅ Extension: Auto-filled successfully!');
                 showNotification(`Auto-filled ${result.filledCount} fields for ${data.provider}`);
+              } else {
+                console.error('❌ Extension: Auto-fill failed:', result.message);
               }
             });
           }, 1500); // Wait 1.5 seconds for page elements to load
+        } else {
+          console.warn('⚠️ Extension: Data expired (older than 5 minutes)');
+          localStorage.removeItem('dgvcl_autofill_data');
         }
+      } else {
+        console.log('ℹ️ Extension: No stored data found');
       }
     } catch (e) {
-      console.log('Error in auto-fill:', e);
+      console.error('❌ Extension: Error in auto-fill:', e);
     }
   }
 }

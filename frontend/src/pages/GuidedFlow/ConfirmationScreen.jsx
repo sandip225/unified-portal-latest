@@ -30,15 +30,25 @@ const ConfirmationScreen = ({
   const handleOpenPortal = () => {
     // Store form data in localStorage for chrome extension to use
     if (formData) {
-      localStorage.setItem('dgvcl_autofill_data', JSON.stringify({
+      const dataToStore = {
         mobile: formData.mobile,
         consumer_number: formData.consumer_number,
         provider: providerName,
         timestamp: Date.now()
-      }));
+      };
+      
+      console.log('🔵 Storing data for extension:', dataToStore);
+      localStorage.setItem('dgvcl_autofill_data', JSON.stringify(dataToStore));
+      
+      // Verify it was stored
+      const stored = localStorage.getItem('dgvcl_autofill_data');
+      console.log('✅ Data stored in localStorage:', stored);
+    } else {
+      console.error('❌ No formData available!');
     }
     
     // Open portal in new tab
+    console.log('🌐 Opening portal:', portalUrl);
     window.open(portalUrl, '_blank');
   };
 
