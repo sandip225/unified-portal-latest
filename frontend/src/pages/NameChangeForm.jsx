@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { ArrowLeft, ExternalLink, Zap, Flame, Droplets, Building, CheckCircle } from 'lucide-react';
 import { suppliers, getSuppliers } from '../data/supplierData';
-import RPAController from '../components/RPAController';
+import RPAController from '../components/SimpleRPAController';
 
 const NameChangeForm = () => {
   const location = useLocation();
