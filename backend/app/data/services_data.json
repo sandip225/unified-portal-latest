@@ -1,16 +1,100 @@
 {
   "gas": [
+  "gas": [
     {
       "id": "gujarat-gas",
       "name": "Gujarat Gas Ltd",
       "type": "government",
       "portal_url": "https://www.gujaratgas.com",
       "name_change_url": "https://iconnect.gujaratgas.com/Portal/outer-service-request_template.aspx",
-      "address_change_url": "https://www.gujaratgas.com/customer-care-numbers/",
+      "address_change_url": "https://iconnect.gujaratgas.com/Portal/outer-service-request_template.aspx",
       "api_available": false,
       "online_available": true,
       "rpa_enabled": true,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile", "email", "address"]
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer Number",
+          "label_hindi": "उपभोक्ता संख्या",
+          "label_gujarati": "ગ્રાહક નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Gujarat Gas consumer number",
+          "validation": "^[A-Z0-9]{8,12}$",
+          "selenium_selector": "input[name='consumer_no']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per gas bill)",
+          "label_hindi": "वर्तमान नाम (गैस बिल के अनुसार)",
+          "label_gujarati": "વર્તમાન નામ (ગેસ બિલ મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per gas bill",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='current_name']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "label_gujarati": "નવું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name",
+          "selenium_selector": "input[name='new_name']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "label_hindi": "ईमेल पता",
+          "label_gujarati": "ઇમેઇલ સરનામું",
+          "type": "email",
+          "required": false,
+          "placeholder": "Enter email address",
+          "selenium_selector": "input[name='email']"
+        },
+        {
+          "name": "address",
+          "label": "Address",
+          "label_hindi": "पता",
+          "label_gujarati": "સરનામું",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Enter complete address",
+          "ocr_field": "address",
+          "selenium_selector": "textarea[name='address']"
+        },
+        {
+          "name": "reason",
+          "label": "Reason for Name Change",
+          "label_hindi": "नाम परिवर्तन का कारण",
+          "label_gujarati": "નામ બદલવાનું કારણ",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "marriage", "label": "Marriage", "label_hindi": "विवाह", "label_gujarati": "લગ્ન"},
+            {"value": "divorce", "label": "Divorce", "label_hindi": "तलाक", "label_gujarati": "છૂટાછેડા"},
+            {"value": "legal", "label": "Legal Name Change", "label_hindi": "कानूनी नाम परिवर्तन", "label_gujarati": "કાનૂની નામ બદલાવ"},
+            {"value": "other", "label": "Other", "label_hindi": "अन्य", "label_gujarati": "અન્ય"}
+          ],
+          "selenium_selector": "select[name='reason']"
+        }
+      ]
     },
     {
       "id": "adani-gas",
@@ -18,11 +102,66 @@
       "type": "private",
       "portal_url": "https://www.adanigas.com",
       "name_change_url": "https://www.adanigas.com/name-transfer",
-      "address_change_url": "https://www.adanigas.com/en/myaccount",
+      "address_change_url": "https://www.adanigas.com/name-transfer",
       "api_available": false,
       "online_available": true,
       "rpa_enabled": true,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile", "email"]
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer Number",
+          "label_hindi": "उपभोक्ता संख्या",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Adani Gas consumer number",
+          "validation": "^[A-Z0-9]{8,12}$"
+        },
+        {
+          "name": "bp_number",
+          "label": "BP Number",
+          "label_hindi": "बीपी नंबर",
+          "type": "text",
+          "required": false,
+          "placeholder": "Enter BP number if available"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per bill)",
+          "label_hindi": "वर्तमान नाम",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per gas bill",
+          "ocr_field": "name"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$"
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "label_hindi": "ईमेल पता",
+          "type": "email",
+          "required": false,
+          "placeholder": "Enter email address"
+        }
+      ]
     },
     {
       "id": "torrent-gas",
@@ -30,11 +169,69 @@
       "type": "private",
       "portal_url": "https://connect.torrentgas.com",
       "name_change_url": "https://www.torrentgas.com",
-      "address_change_url": "https://connect.torrentgas.com",
+      "address_change_url": "https://www.torrentgas.com",
       "api_available": false,
       "online_available": true,
       "rpa_enabled": true,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile", "address"]
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer Number",
+          "label_hindi": "उपभोक्ता संख्या",
+          "label_gujarati": "ગ્રાહક નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Torrent Gas consumer number",
+          "validation": "^[A-Z0-9]{8,12}$",
+          "selenium_selector": "input[name='consumer_number']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per gas bill)",
+          "label_hindi": "वर्तमान नाम (गैस बिल के अनुसार)",
+          "label_gujarati": "વર્તમાન નામ (ગેસ બિલ મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per gas bill",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='old_name']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "label_gujarati": "નવું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name",
+          "selenium_selector": "input[name='new_name']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "address",
+          "label": "Address",
+          "label_hindi": "पता",
+          "label_gujarati": "સરનામું",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Enter complete address",
+          "ocr_field": "address",
+          "selenium_selector": "textarea[name='address']"
+        }
+      ]
     },
     {
       "id": "sabarmati-gas",
@@ -53,12 +250,80 @@
       "name": "Vadodara Gas Ltd",
       "type": "private",
       "portal_url": "https://www.vgl.co.in",
-      "name_change_url": "https://www.vgl.co.in",
-      "address_change_url": "https://www.vgl.co.in",
+      "name_change_url": "https://www.vgl.co.in/customer-services",
+      "address_change_url": "https://www.vgl.co.in/customer-services",
       "api_available": false,
       "online_available": true,
-      "rpa_enabled": false,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile"]
+      "rpa_enabled": true,
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer Number",
+          "label_hindi": "उपभोक्ता संख्या",
+          "label_gujarati": "ગ્રાહક નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Vadodara Gas consumer number",
+          "validation": "^[A-Z0-9]{8,12}$",
+          "selenium_selector": "input[name='consumer_number']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per gas bill)",
+          "label_hindi": "वर्तमान नाम (गैस बिल के अनुसार)",
+          "label_gujarati": "વર્તમાન નામ (ગેસ બિલ મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per gas bill",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='current_name']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "label_gujarati": "નવું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name",
+          "selenium_selector": "input[name='new_name']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "label_hindi": "ईमेल पता",
+          "label_gujarati": "ઇમેઇલ સરનામું",
+          "type": "email",
+          "required": false,
+          "placeholder": "Enter email address",
+          "selenium_selector": "input[name='email']"
+        },
+        {
+          "name": "address",
+          "label": "Address",
+          "label_hindi": "पता",
+          "label_gujarati": "સરનામું",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Enter complete address",
+          "ocr_field": "address",
+          "selenium_selector": "textarea[name='address']"
+        }
+      ]
     },
     {
       "id": "irm-energy",
@@ -195,7 +460,102 @@
       "api_available": false,
       "online_available": true,
       "rpa_enabled": true,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile", "email"]
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_type": "pdf_download",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer Number",
+          "label_hindi": "उपभोक्ता संख्या",
+          "label_gujarati": "ગ્રાહક નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Torrent Power consumer number",
+          "validation": "^[A-Z0-9]{10,14}$",
+          "selenium_selector": "input[name='consumer_no']"
+        },
+        {
+          "name": "service_number",
+          "label": "Service Number",
+          "label_hindi": "सेवा संख्या",
+          "label_gujarati": "સેવા નંબર",
+          "type": "text",
+          "required": false,
+          "placeholder": "Enter service number if available",
+          "selenium_selector": "input[name='service_no']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per electricity bill)",
+          "label_hindi": "वर्तमान नाम (बिजली बिल के अनुसार)",
+          "label_gujarati": "વર્તમાન નામ (વીજળી બિલ મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per electricity bill",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='current_name']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "label_gujarati": "નવું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name",
+          "selenium_selector": "input[name='new_name']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "email",
+          "label": "Email Address",
+          "label_hindi": "ईमेल पता",
+          "label_gujarati": "ઇમેઇલ સરનામું",
+          "type": "email",
+          "required": false,
+          "placeholder": "Enter email address",
+          "selenium_selector": "input[name='email']"
+        },
+        {
+          "name": "address",
+          "label": "Service Address",
+          "label_hindi": "सेवा पता",
+          "label_gujarati": "સેવા સરનામું",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Enter complete service address",
+          "ocr_field": "address",
+          "selenium_selector": "textarea[name='address']"
+        },
+        {
+          "name": "city",
+          "label": "City",
+          "label_hindi": "शहर",
+          "label_gujarati": "શહેર",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "ahmedabad", "label": "Ahmedabad", "label_gujarati": "અમદાવાદ"},
+            {"value": "gandhinagar", "label": "Gandhinagar", "label_gujarati": "ગાંધીનગર"},
+            {"value": "surat", "label": "Surat", "label_gujarati": "સુરત"},
+            {"value": "bhiwandi", "label": "Bhiwandi", "label_gujarati": "ભિવંડી"},
+            {"value": "agra", "label": "Agra", "label_gujarati": "આગ્રા"}
+          ],
+          "selenium_selector": "select[name='city']"
+        }
+      ]
     }
   ],
   "water": [
@@ -203,13 +563,102 @@
       "id": "gwssb",
       "name": "Gujarat Water Supply (GWSSB)",
       "type": "government",
-      "portal_url": "https://gwssb.gujarat.gov.in",
-      "name_change_url": "https://watersupply.gujarat.gov.in/forms",
-      "address_change_url": "https://watersupply.gujarat.gov.in/other-info",
+      "portal_url": "https://watersupply.gujarat.gov.in",
+      "name_change_url": "https://watersupply.gujarat.gov.in/contact",
+      "address_change_url": "https://watersupply.gujarat.gov.in/contact",
       "api_available": false,
       "online_available": true,
-      "rpa_enabled": false,
-      "form_fields": ["consumer_number", "old_name", "new_name", "mobile", "address"]
+      "rpa_enabled": true,
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_fields": [
+        {
+          "name": "consumer_number",
+          "label": "Consumer ID / Connection Number",
+          "label_hindi": "उपभोक्ता आईडी / कनेक्शन संख्या",
+          "label_gujarati": "ગ્રાહક આઈડી / કનેક્શન નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter GWSSB consumer ID",
+          "validation": "^[A-Z0-9]{8,15}$",
+          "selenium_selector": "input[name='consumer_id']"
+        },
+        {
+          "name": "zone",
+          "label": "Zone / Division",
+          "label_hindi": "क्षेत्र / विभाग",
+          "label_gujarati": "ઝોન / વિભાગ",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "ahmedabad", "label": "Ahmedabad Zone", "label_gujarati": "અમદાવાદ ઝોન"},
+            {"value": "surat", "label": "Surat Zone", "label_gujarati": "સુરત ઝોન"},
+            {"value": "vadodara", "label": "Vadodara Zone", "label_gujarati": "વડોદરા ઝોન"},
+            {"value": "rajkot", "label": "Rajkot Zone", "label_gujarati": "રાજકોટ ઝોન"},
+            {"value": "bhavnagar", "label": "Bhavnagar Zone", "label_gujarati": "ભાવનગર ઝોન"},
+            {"value": "jamnagar", "label": "Jamnagar Zone", "label_gujarati": "જામનગર ઝોન"}
+          ],
+          "selenium_selector": "select[name='zone']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Name (as per water bill)",
+          "label_hindi": "वर्तमान नाम (पानी बिल के अनुसार)",
+          "label_gujarati": "વર્તમાન નામ (પાણી બિલ મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current name as per water bill",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='current_name']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Name",
+          "label_hindi": "नया नाम",
+          "label_gujarati": "નવું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new name",
+          "selenium_selector": "input[name='new_name']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "address",
+          "label": "Service Address",
+          "label_hindi": "सेवा पता",
+          "label_gujarati": "સેવા સરનામું",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Enter complete service address",
+          "ocr_field": "address",
+          "selenium_selector": "textarea[name='address']"
+        },
+        {
+          "name": "connection_type",
+          "label": "Connection Type",
+          "label_hindi": "कनेक्शन प्रकार",
+          "label_gujarati": "કનેક્શન પ્રકાર",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "domestic", "label": "Domestic", "label_hindi": "घरेलू", "label_gujarati": "ઘરેલું"},
+            {"value": "commercial", "label": "Commercial", "label_hindi": "व्यावसायिक", "label_gujarati": "વ્યાવસાયિક"},
+            {"value": "industrial", "label": "Industrial", "label_hindi": "औद्योगिक", "label_gujarati": "ઔદ્યોગિક"}
+          ],
+          "selenium_selector": "select[name='connection_type']"
+        }
+      ]
     },
     {
       "id": "amc",
@@ -270,8 +719,128 @@
       "address_change_url": "https://revenuedepartment.gujarat.gov.in/e-dhara-forms",
       "api_available": false,
       "online_available": true,
-      "rpa_enabled": false,
-      "form_fields": ["property_id", "old_name", "new_name", "mobile", "address", "survey_number"]
+      "rpa_enabled": true,
+      "login_required": false,
+      "direct_access": true,
+      "automation_type": "direct",
+      "form_type": "record_view_only",
+      "mutation_required": true,
+      "form_fields": [
+        {
+          "name": "district",
+          "label": "District",
+          "label_hindi": "जिला",
+          "label_gujarati": "જિલ્લો",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "ahmedabad", "label": "Ahmedabad", "label_gujarati": "અમદાવાદ"},
+            {"value": "surat", "label": "Surat", "label_gujarati": "સુરત"},
+            {"value": "vadodara", "label": "Vadodara", "label_gujarati": "વડોદરા"},
+            {"value": "rajkot", "label": "Rajkot", "label_gujarati": "રાજકોટ"},
+            {"value": "bhavnagar", "label": "Bhavnagar", "label_gujarati": "ભાવનગર"},
+            {"value": "jamnagar", "label": "Jamnagar", "label_gujarati": "જામનગર"},
+            {"value": "gandhinagar", "label": "Gandhinagar", "label_gujarati": "ગાંધીનગર"},
+            {"value": "anand", "label": "Anand", "label_gujarati": "આણંદ"}
+          ],
+          "selenium_selector": "select[name='district']"
+        },
+        {
+          "name": "taluka",
+          "label": "Taluka",
+          "label_hindi": "तालुका",
+          "label_gujarati": "તાલુકો",
+          "type": "select",
+          "required": true,
+          "depends_on": "district",
+          "selenium_selector": "select[name='taluka']"
+        },
+        {
+          "name": "village",
+          "label": "Village",
+          "label_hindi": "गांव",
+          "label_gujarati": "ગામ",
+          "type": "select",
+          "required": true,
+          "depends_on": "taluka",
+          "selenium_selector": "select[name='village']"
+        },
+        {
+          "name": "survey_number",
+          "label": "Survey Number",
+          "label_hindi": "सर्वे संख्या",
+          "label_gujarati": "સર્વે નંબર",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter survey number",
+          "validation": "^[0-9/]+$",
+          "selenium_selector": "input[name='survey_no']"
+        },
+        {
+          "name": "subdivision_number",
+          "label": "Sub-division Number",
+          "label_hindi": "उप-विभाग संख्या",
+          "label_gujarati": "પેટા વિભાગ નંબર",
+          "type": "text",
+          "required": false,
+          "placeholder": "Enter sub-division number if applicable",
+          "selenium_selector": "input[name='subdiv_no']"
+        },
+        {
+          "name": "old_name",
+          "label": "Current Owner Name (as per 7/12)",
+          "label_hindi": "वर्तमान मालिक का नाम (7/12 के अनुसार)",
+          "label_gujarati": "વર્તમાન માલિકનું નામ (7/12 મુજબ)",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter current owner name as per 7/12",
+          "ocr_field": "name",
+          "selenium_selector": "input[name='current_owner']"
+        },
+        {
+          "name": "new_name",
+          "label": "New Owner Name",
+          "label_hindi": "नया मालिक नाम",
+          "label_gujarati": "નવા માલિકનું નામ",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter new owner name",
+          "selenium_selector": "input[name='new_owner']"
+        },
+        {
+          "name": "mobile",
+          "label": "Mobile Number",
+          "label_hindi": "मोबाइल नंबर",
+          "label_gujarati": "મોબાઇલ નંબર",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Enter 10-digit mobile number",
+          "validation": "^[6-9][0-9]{9}$",
+          "selenium_selector": "input[name='mobile']"
+        },
+        {
+          "name": "mutation_reason",
+          "label": "Reason for Mutation",
+          "label_hindi": "म्यूटेशन का कारण",
+          "label_gujarati": "મ્યુટેશનનું કારણ",
+          "type": "select",
+          "required": true,
+          "options": [
+            {"value": "sale", "label": "Sale/Purchase", "label_hindi": "बिक्री/खरीद", "label_gujarati": "વેચાણ/ખરીદી"},
+            {"value": "inheritance", "label": "Inheritance", "label_hindi": "विरासत", "label_gujarati": "વારસો"},
+            {"value": "gift", "label": "Gift", "label_hindi": "उपहार", "label_gujarati": "ભેટ"},
+            {"value": "partition", "label": "Partition", "label_hindi": "विभाजन", "label_gujarati": "વિભાજન"},
+            {"value": "court_order", "label": "Court Order", "label_hindi": "न्यायालय आदेश", "label_gujarati": "કોર્ટ ઓર્ડર"}
+          ],
+          "selenium_selector": "select[name='mutation_reason']"
+        }
+      ],
+      "instructions": [
+        "AnyROR provides view-only access to land records",
+        "For name change/mutation, visit e-Dhara center or Talati office",
+        "Carry required documents for mutation process",
+        "Online record verification available 24/7"
+      ]
     },
     {
       "id": "enagar",

@@ -50,9 +50,13 @@
         "https://www.adanigas.com/*",
         "https://www.gujaratgas.com/*",
         "https://ahmedabadcity.gov.in/*",
-        "https://anyror.gujarat.gov.in/*"
+        "https://anyror.gujarat.gov.in/*",
+        "https://www.dgvcl.com/*",
+        "https://www.pgvcl.com/*",
+        "https://www.ugvcl.com/*",
+        "https://www.mgvcl.com/*"
       ],
-      "js": ["content-simple.js"],
+      "js": ["content-simple.js", "selenium-bridge.js"],
       "css": ["content.css"],
       "run_at": "document_end"
     }

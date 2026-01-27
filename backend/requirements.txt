@@ -10,7 +10,10 @@ pydantic-settings==2.1.0
 aiofiles==23.2.1
 pytesseract==0.3.10
 Pillow==10.1.0
-selenium==4.15.2
-webdriver-manager==4.0.1
+selenium==4.26.1
+webdriver-manager==4.0.2
+undetected-chromedriver==3.5.5
+selenium-stealth==1.0.6
+fake-useragent==1.4.0
 email-validator==2.1.0
 httpx==0.25.0
