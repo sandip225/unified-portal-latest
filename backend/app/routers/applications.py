@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models import User, Application, ApplicationStatus, ServiceType
 from app.schemas import ApplicationCreate, ApplicationResponse
 from app.auth import get_current_user
-from app.services.rpa_service import rpa_service
+from app.services.direct_automation_service import direct_automation_service
 
 router = APIRouter(prefix="/api/applications", tags=["Applications"])
 
@@ -76,7 +76,7 @@ def autofill_external_form(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Trigger RPA to fill external website form"""
+    """Trigger automation to fill external website form"""
     application = db.query(Application).filter(
         Application.id == application_id,
         Application.user_id == current_user.id
@@ -84,7 +84,7 @@ def autofill_external_form(
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
     
-    # Prepare data for RPA
+    # Prepare data for automation
     form_data = application.form_data or {}
     form_data.update({
         "email": current_user.email,
@@ -92,21 +92,21 @@ def autofill_external_form(
         "full_name": current_user.full_name
     })
     
-    # Call appropriate RPA based on service type
+    # Call appropriate automation service based on service type
     if application.service_type == ServiceType.ELECTRICITY:
         if application.application_type == "name_change":
-            result = rpa_service.fill_torrent_power_name_change(form_data)
+            result = direct_automation_service.submit_torrent_power_name_change(form_data)
         else:
-            result = {"success": False, "message": "Application type not supported for RPA"}
+            result = {"success": False, "message": "Application type not supported for automation"}
     
     elif application.service_type == ServiceType.GAS:
         if application.application_type == "name_change":
-            result = rpa_service.fill_adani_gas_name_change(form_data)
+            result = direct_automation_service.submit_gujarat_gas_name_change(form_data)
         else:
-            result = {"success": False, "message": "Application type not supported for RPA"}
+            result = {"success": False, "message": "Application type not supported for automation"}
     
     else:
-        result = {"success": False, "message": "Service type not supported for RPA yet"}
+        result = {"success": False, "message": "Service type not supported for automation yet"}
     
     return result
 

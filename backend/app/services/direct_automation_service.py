@@ -14,7 +14,7 @@ import os
 from datetime import datetime
 
 from .user_data_service import user_data_service
-from .selenium_config import selenium_config
+from .torrent_power_service import torrent_power_service
 
 logger = logging.getLogger(__name__)
 
@@ -428,42 +428,40 @@ class EnhancedDirectAutomationService:
     # ELECTRICITY SERVICES - DIRECT ACCESS
     
     def submit_torrent_power_name_change(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Torrent Power - PDF form download (No login required)"""
+        """Torrent Power - Complete RPA automation with login and form filling"""
         try:
-            logger.info(f"Starting Torrent Power name change for consumer: {data.get('consumer_number')}")
+            logger.info(f"Starting Torrent Power RPA automation for service: {data.get('service_number')}")
             
-            self.setup_driver(headless=False)
-            
-            # Direct URL to forms page
-            url = "https://www.torrentpower.com/customer-care/forms"
-            self.driver.get(url)
-            
-            # Wait for page load
-            self.wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "Name Change")))
-            
-            # Click on Name Change form link
-            name_change_link = self.driver.find_element(By.PARTIAL_LINK_TEXT, "Name Change")
-            name_change_link.click()
-            
-            # Wait for form to load or PDF to download
-            time.sleep(3)
-            
-            screenshot_path = f"screenshots/torrent_power_{int(time.time())}.png"
-            self.driver.save_screenshot(screenshot_path)
-            
-            return {
-                "success": True,
-                "message": "Torrent Power form accessed. PDF form available for download.",
-                "screenshot_path": screenshot_path,
-                "website": "Torrent Power",
-                "note": "PDF form needs to be filled manually and submitted"
+            # Prepare login data
+            login_data = {
+                "username": data.get('username') or data.get('service_number'),
+                "password": data.get('password', '')
             }
             
+            # Prepare form data
+            form_data = {
+                "city": data.get('city', 'Ahmedabad'),
+                "service_number": data.get('service_number'),
+                "mobile": data.get('mobile'),
+                "email": data.get('email'),
+                "old_name": data.get('old_name'),
+                "new_name": data.get('new_name')
+            }
+            
+            # Use the dedicated Torrent Power service
+            result = torrent_power_service.automate_name_change(login_data, form_data)
+            
+            return result
+            
         except Exception as e:
-            logger.error(f"Torrent Power automation failed: {str(e)}")
-            return {"success": False, "error": str(e)}
-        finally:
-            pass
+            logger.error(f"Torrent Power RPA automation failed: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": f"Torrent Power automation failed: {str(e)}",
+                "website": "Torrent Power",
+                "service": "Name Change"
+            }
     
     # WATER SERVICES - DIRECT ACCESS
     
