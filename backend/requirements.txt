@@ -20,7 +20,7 @@ email-validator==2.1.0
 httpx==0.25.0
 python-dotenv==1.0.0
 
-# Browser automation - compatible versions
-openai==1.54.0
-playwright==1.40.0
-browser-use==0.1.44
+# Browser automation - Selenium (reliable and stable)
+selenium==4.26.1
+webdriver-manager==4.0.2
+undetected-chromedriver==3.5.5
