@@ -1,40 +1,15 @@
-# Core FastAPI dependencies - compatible versions
-fastapi==0.104.1
-uvicorn==0.24.0
-starlette==0.27.0
-pydantic==2.5.2
-pydantic-settings==2.1.0
-
-# Database
-sqlalchemy==2.0.23
-
-# Authentication & Security
+# Minimal working requirements - no conflicts
+fastapi==0.100.0
+uvicorn[standard]==0.23.0
+pydantic==2.0.0
+sqlalchemy==2.0.0
+python-multipart==0.0.6
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-python-multipart==0.0.6
-
-# File handling
 aiofiles==23.2.1
-Pillow==10.1.0
-
-# OCR
-pytesseract==0.3.10
-
-# HTTP client
-httpx==0.25.0
-
-# Environment
 python-dotenv==1.0.0
+email-validator==2.0.0
 
-# Email validation
-email-validator==2.1.0
-
-# Browser automation - Selenium (stable versions)
-selenium==4.15.2
-webdriver-manager==4.0.1
-undetected-chromedriver==3.5.4
-selenium-stealth==1.0.6
-fake-useragent==1.4.0
-
-# System
-setuptools
+# Selenium only - no other browser automation
+selenium==4.10.0
+webdriver-manager==3.8.6
