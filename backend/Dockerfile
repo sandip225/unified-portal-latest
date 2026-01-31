@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for browser-use
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     ca-certificates \
     build-essential \
+    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome
@@ -25,6 +26,10 @@ RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearm
 COPY requirements.txt .
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright browsers for browser-use
+RUN playwright install chromium
+RUN playwright install-deps
 
 # Copy application code
 COPY . .
