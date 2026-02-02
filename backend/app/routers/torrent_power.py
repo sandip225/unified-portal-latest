@@ -19,14 +19,93 @@ class TorrentPowerLoginData(BaseModel):
 class TorrentPowerFormData(BaseModel):
     city: Optional[str] = "Ahmedabad"
     service_number: Optional[str] = None
+    transaction_number: Optional[str] = None
     mobile: Optional[str] = None
     email: Optional[str] = None
     old_name: Optional[str] = None
     new_name: Optional[str] = None
 
 class TorrentPowerAutomationRequest(BaseModel):
-    login_data: TorrentPowerLoginData
+    login_data: Optional[TorrentPowerLoginData] = None # Optional now for live fill
     form_data: TorrentPowerFormData
+
+# ... existing automate_name_change ...
+
+@router.post("/start-live-fill")
+async def start_live_fill(request: TorrentPowerAutomationRequest):
+    """
+    Start Live Auto-fill (Headed Browser)
+    
+    This endpoint will:
+    1. Launch browser in visible mode
+    2. Navigate to Name Change URL
+    3. Wait for page load (and manual login if needed)
+    4. Auto-fill the form
+    5. Leave browser open for user submission
+    """
+    try:
+        logger.info("Starting Live Torrent Power Fill")
+        
+        # Convert Pydantic models to dictionaries
+        form_data = request.form_data.dict()
+        
+        # Call the automation service
+        result = torrent_power_service.start_live_automation(form_data)
+        
+        if result['success']:
+            return {
+                "success": True,
+                "message": result['message'],
+                "filled_fields": result.get('filled_fields'),
+                "website": "Torrent Power",
+                "service": "Name Change"
+            }
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "success": False,
+                    "error": result.get('error'),
+                    "message": "Live Fill failed"
+                }
+            )
+            
+    except Exception as e:
+        logger.error(f"Torrent Power Live Fill API error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "success": False,
+                "error": str(e),
+                "message": "Internal server error during live fill"
+            }
+        )
+
+# ... existing test_connection ...
+
+@router.get("/form-fields")
+async def get_form_fields():
+    """Get information about required form fields"""
+    return {
+        "login_fields": {
+            "username": "Service number or registered username",
+            "password": "Account password"
+        },
+        "form_fields": {
+            "city": "City (default: Ahmedabad)",
+            "service_number": "Torrent Power service number",
+            "transaction_number": "Transaction / Reference Number",
+            "mobile": "Mobile number",
+            "email": "Email address",
+            "old_name": "Current name on the connection",
+            "new_name": "New name to be updated"
+        },
+        "notes": [
+            "Username is typically the service number",
+            "Captcha solving may require manual intervention",
+            "Form will be filled but manual review is recommended before submission"
+        ]
+    }
 
 @router.post("/automate-name-change")
 async def automate_name_change(request: TorrentPowerAutomationRequest):

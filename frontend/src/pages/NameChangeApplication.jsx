@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { 
-  Zap, Flame, Droplets, Building, ArrowLeft, Upload, 
+import {
+  Zap, Flame, Droplets, Building, ArrowLeft, Upload,
   User, Phone, Mail, MapPin, FileText, Calendar,
-  AlertCircle, CheckCircle, Info, Sparkles
+  AlertCircle, CheckCircle, Info, Sparkles, Play, Bot
 } from 'lucide-react';
+import axios from '../api/axios';
+import TorrentPowerAutomation from '../components/TorrentPowerAutomation';
 
 const NameChangeApplication = () => {
   const { serviceType } = useParams();
   const [searchParams] = useSearchParams();
   const providerId = searchParams.get('provider');
-  
+
   const [formData, setFormData] = useState({
     // Torrent Power Specific Fields (only for torrent-power)
     city: 'Ahmedabad',
@@ -19,7 +21,7 @@ const NameChangeApplication = () => {
     mobile: '',
     email: '',
     confirmEmail: '',
-    
+
     // Original fields for other providers
     currentName: '',
     newName: '',
@@ -48,6 +50,7 @@ const NameChangeApplication = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showAutomation, setShowAutomation] = useState(false);
 
   const serviceConfig = {
     electricity: {
@@ -57,14 +60,14 @@ const NameChangeApplication = () => {
       color: 'bg-yellow-500'
     },
     gas: {
-      name: 'Gas', 
+      name: 'Gas',
       nameHindi: 'गैस',
       icon: Flame,
       color: 'bg-orange-500'
     },
     water: {
       name: 'Water',
-      nameHindi: 'पानी', 
+      nameHindi: 'पानी',
       icon: Droplets,
       color: 'bg-blue-500'
     },
@@ -92,7 +95,7 @@ const NameChangeApplication = () => {
     },
     'ugvcl': {
       name: 'UGVCL',
-      nameHindi: 'यूजीवीसीएल', 
+      nameHindi: 'यूजीवीसीएल',
       type: 'Government',
       service: 'electricity',
       requiredFields: ['currentName', 'newName', 'connectionNumber', 'aadhaarNumber', 'mobile'],
@@ -104,7 +107,7 @@ const NameChangeApplication = () => {
     'mgvcl': {
       name: 'MGVCL',
       nameHindi: 'एमजीवीसीएल',
-      type: 'Government', 
+      type: 'Government',
       service: 'electricity',
       requiredFields: ['currentName', 'newName', 'connectionNumber', 'aadhaarNumber', 'mobile'],
       specificFields: ['subdivisionCode', 'consumerCategory'],
@@ -116,7 +119,7 @@ const NameChangeApplication = () => {
       name: 'DGVCL',
       nameHindi: 'डीजीवीसीएल',
       type: 'Government',
-      service: 'electricity', 
+      service: 'electricity',
       requiredFields: ['currentName', 'newName', 'connectionNumber', 'aadhaarNumber', 'mobile'],
       specificFields: ['subdivisionCode', 'consumerCategory'],
       documents: ['identityProof', 'addressProof', 'nameChangeProof', 'connectionBill'],
@@ -133,9 +136,10 @@ const NameChangeApplication = () => {
       documents: [], // No documents required for online application
       processingTime: '5-10 days',
       fees: 'Rs. 100 + taxes',
+      aiSupported: true,
       portalUrl: 'https://connect.torrentpower.com/tplcp/application/namechangerequest'
     },
-    
+
     // Gas Providers
     'gujarat-gas': {
       name: 'Gujarat Gas Ltd',
@@ -159,7 +163,7 @@ const NameChangeApplication = () => {
       processingTime: '3-7 days',
       fees: 'Rs. 200 + taxes'
     },
-    
+
     // Water Providers
     'amc-water': {
       name: 'AMC Water',
@@ -172,7 +176,7 @@ const NameChangeApplication = () => {
       processingTime: '15-30 days',
       fees: 'Municipal prescribed fees'
     },
-    
+
     // Property Providers
     'anyror': {
       name: 'AnyRoR (Revenue Dept)',
@@ -201,7 +205,7 @@ const NameChangeApplication = () => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -221,11 +225,11 @@ const NameChangeApplication = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (providerId === 'torrent-power') {
       // Torrent Power specific validation
       const requiredFields = ['serviceNumber', 'tNumber', 'mobile', 'email', 'confirmEmail'];
-      
+
       requiredFields.forEach(field => {
         if (!formData[field]) {
           newErrors[field] = 'This field is required';
@@ -257,23 +261,29 @@ const NameChangeApplication = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
-    // Traditional submission for all providers
+    // Check if this is Torrent Power with AI automation
+    if (providerId === 'torrent-power' && provider.aiSupported) {
+      setShowAutomation(true);
+      return;
+    }
+
+    // Traditional submission for other providers
     setLoading(true);
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       alert(`Application submitted successfully for ${provider.name}! You will receive a confirmation email shortly.`);
-      
+
       // Reset form or redirect
       // navigate('/applications');
-      
+
     } catch (error) {
       alert('Error submitting application. Please try again.');
     } finally {
@@ -281,9 +291,56 @@ const NameChangeApplication = () => {
     }
   };
 
+  const handleAutomationComplete = (result) => {
+    console.log('Automation completed:', result);
+    if (result.success) {
+      alert(`✅ Automation Completed!\n\n${result.message}\n\nNext Steps:\n${result.next_steps?.join('\n') || 'Complete the form manually in the browser window.'}`);
+    } else {
+      alert(`❌ Automation Failed!\n\n${result.error || result.message}`);
+    }
+  };
+
+  const handleCloseAutomation = () => {
+    setShowAutomation(false);
+    }
+  };
+
+  const handleAutoFill = async () => {
+    // 1. Prepare data mapping
+    const dataToFill = {
+      city: formData.city,
+      service_number: formData.serviceNumber,
+      transaction_number: formData.tNumber,
+      mobile: formData.mobile,
+      email: formData.email,
+      old_name: formData.currentName // Mapping if available, though not main
+    };
+
+    // 2. Call Backend API for Live Automation
+    setLoading(true);
+    try {
+      alert('🚀 Starting Live Automation...\n\nA browser window will open shortly. Please watch the process and manually log in if required.');
+
+      await axios.post('/api/torrent-power/start-live-fill', {
+        form_data: dataToFill
+      });
+
+      // Note: The backend returns when automation is "done" or "started". 
+      // Our backend implementation currently waits for fill.
+      // Once returned, we can notify user.
+      alert('✅ Form Auto-filled Successfully!\n\nPlease review the data in the opened browser window and submit the form.');
+
+    } catch (error) {
+      console.error('Automation failed:', error);
+      alert(`❌ Automation Failed: ${error.response?.data?.detail?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderField = (fieldName, label, type = 'text', required = false) => {
     const isRequired = provider.requiredFields.includes(fieldName) || required;
-    
+
     return (
       <div key={fieldName}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -294,9 +351,8 @@ const NameChangeApplication = () => {
           name={fieldName}
           value={formData[fieldName]}
           onChange={handleInputChange}
-          className={`w-full px-4 py-3 border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-colors ${
-            errors[fieldName] ? 'border-red-500' : 'border-gray-300'
-          }`}
+          className={`w-full px-4 py-3 border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-colors ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder={`Enter ${label.toLowerCase()}`}
         />
         {errors[fieldName] && (
@@ -308,15 +364,14 @@ const NameChangeApplication = () => {
 
   const renderFileUpload = (fieldName, label, accept = '.pdf,.jpg,.jpeg,.png') => {
     const isRequired = provider.documents.includes(fieldName);
-    
+
     return (
       <div key={fieldName}>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           {label} {isRequired && <span className="text-red-500">*</span>}
         </label>
-        <div className={`border-2 border-dashed rounded-lg p-4 text-center ${
-          errors[fieldName] ? 'border-red-500' : 'border-gray-300'
-        }`}>
+        <div className={`border-2 border-dashed rounded-lg p-4 text-center ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'
+          }`}>
           <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <input
             type="file"
@@ -402,7 +457,7 @@ const NameChangeApplication = () => {
               Torrent Power Application Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+
               {/* City Selection */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -423,16 +478,16 @@ const NameChangeApplication = () => {
 
               {/* Service Number */}
               {renderField('serviceNumber', 'Service Number', 'text', true)}
-              
+
               {/* T No (Transaction/Token Number) */}
               {renderField('tNumber', 'T No (Transaction Number)', 'text', true)}
-              
+
               {/* Mobile Number */}
               {renderField('mobile', 'Mobile Number', 'tel', true)}
-              
+
               {/* Email */}
               {renderField('email', 'Email Address', 'email', true)}
-              
+
               {/* Confirm Email */}
               {renderField('confirmEmail', 'Confirm Email Address', 'email', true)}
             </div>
@@ -494,7 +549,7 @@ const NameChangeApplication = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {renderField('connectionNumber', 'Connection/Consumer Number')}
                 {renderField('registeredAddress', 'Registered Address')}
-                
+
                 {/* Provider Specific Fields */}
                 {provider.type === 'Government' && (
                   <>
@@ -502,7 +557,7 @@ const NameChangeApplication = () => {
                     {renderField('rationCardNumber', 'Ration Card Number')}
                   </>
                 )}
-                
+
                 {provider.type === 'Private' && provider.name !== 'Torrent Power' && (
                   <>
                     {renderField('customerID', 'Customer ID')}
@@ -511,17 +566,17 @@ const NameChangeApplication = () => {
                 )}
 
                 {/* Service Specific Fields */}
-                {provider.specificFields.includes('subdivisionCode') && 
+                {provider.specificFields.includes('subdivisionCode') &&
                   renderField('subdivisionCode', 'Subdivision Code')}
-                {provider.specificFields.includes('consumerCategory') && 
+                {provider.specificFields.includes('consumerCategory') &&
                   renderField('consumerCategory', 'Consumer Category')}
-                {provider.specificFields.includes('loadSanctioned') && 
+                {provider.specificFields.includes('loadSanctioned') &&
                   renderField('loadSanctioned', 'Load Sanctioned (KW)')}
-                {provider.specificFields.includes('wardNumber') && 
+                {provider.specificFields.includes('wardNumber') &&
                   renderField('wardNumber', 'Ward Number')}
-                {provider.specificFields.includes('propertyNumber') && 
+                {provider.specificFields.includes('propertyNumber') &&
                   renderField('propertyNumber', 'Property Number')}
-                {provider.specificFields.includes('surveyNumber') && 
+                {provider.specificFields.includes('surveyNumber') &&
                   renderField('surveyNumber', 'Survey Number')}
               </div>
             </div>
@@ -533,22 +588,22 @@ const NameChangeApplication = () => {
                 Required Documents
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {provider.documents.includes('identityProof') && 
+                {provider.documents.includes('identityProof') &&
                   renderFileUpload('identityProof', 'Identity Proof (Aadhaar/PAN/Passport)')}
-                {provider.documents.includes('addressProof') && 
+                {provider.documents.includes('addressProof') &&
                   renderFileUpload('addressProof', 'Address Proof')}
-                {provider.documents.includes('nameChangeProof') && 
+                {provider.documents.includes('nameChangeProof') &&
                   renderFileUpload('nameChangeProof', 'Name Change Proof (Marriage Certificate/Gazette/Affidavit)')}
-                {provider.documents.includes('connectionBill') && 
+                {provider.documents.includes('connectionBill') &&
                   renderFileUpload('connectionBill', 'Latest Connection Bill')}
-                {provider.documents.includes('propertyDocuments') && 
+                {provider.documents.includes('propertyDocuments') &&
                   renderFileUpload('propertyDocuments', 'Property Documents')}
               </div>
             </div>
           </>
         )}
 
-        {/* Submit Button */}
+        {/* Submit or Auto-Fill Button */}
         <div className="flex items-center justify-between pt-6 border-t border-gray-200">
           <Link
             to={`/service-providers/${serviceType}/name-change`}
@@ -556,28 +611,52 @@ const NameChangeApplication = () => {
           >
             Back to Providers
           </Link>
-          
+
           <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-5 h-5" />
-                  Submit Application
-                </>
-              )}
-            </button>
+            {providerId === 'torrent-power' ? (
+              <button
+                type="button"
+                onClick={handleAutoFill}
+            {providerId === 'torrent-power' && provider.aiSupported ? (
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-3 rounded-lg font-bold transition-all duration-300 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <Bot className="w-5 h-5 fill-current" />
+                Start AI Auto-fill in Website (Production Ready)
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-5 h-5" />
+                    Submit Application
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </form>
+
+      {/* Torrent Power Automation Modal */}
+      {showAutomation && (
+        <TorrentPowerAutomation
+          userData={formData}
+          onComplete={handleAutomationComplete}
+          onClose={handleCloseAutomation}
+        />
+      )}
     </div>
   );
 };
