@@ -1,16 +1,56 @@
 import { useState } from 'react';
-import { Bot, CheckCircle, AlertCircle, Play, ExternalLink } from 'lucide-react';
+import { Bot, CheckCircle, AlertCircle, Play, ExternalLink, Monitor, Server } from 'lucide-react';
 import api from '../api/axios';
+import clientRpaService from '../services/clientRpaService';
 
 const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
   const [automationStatus, setAutomationStatus] = useState('idle'); // idle, running, completed, failed
   const [result, setResult] = useState(null);
   const [statusMessage, setStatusMessage] = useState('');
+  const [automationType, setAutomationType] = useState('client'); // 'client' or 'server'
 
-  const startAutomation = async () => {
+  const startClientAutomation = async () => {
     try {
       setAutomationStatus('running');
-      setStatusMessage('🚀 Starting automation...');
+      setStatusMessage('🚀 Starting automation on your laptop...');
+
+      console.log('🔍 Debug - userData received:', userData);
+
+      const result = await clientRpaService.startTorrentPowerAutomation(userData);
+
+      console.log('📥 Client RPA Response:', result);
+
+      if (result.success) {
+        setAutomationStatus('completed');
+        setStatusMessage('🎉 Application submitted successfully on your laptop!');
+        setResult(result);
+        
+        if (onComplete) {
+          onComplete(result);
+        }
+      } else {
+        setAutomationStatus('failed');
+        setStatusMessage(`❌ Client automation failed: ${result.message}`);
+        setResult(result);
+      }
+
+    } catch (error) {
+      console.error('❌ Client automation error:', error);
+      setAutomationStatus('failed');
+      setStatusMessage(`❌ Failed to start client automation: ${error.message}`);
+      setResult({
+        success: false,
+        error: error.message,
+        message: 'Client Automation Failed'
+      });
+    }
+  };
+
+  const startServerAutomation = async () => {
+  const startServerAutomation = async () => {
+    try {
+      setAutomationStatus('running');
+      setStatusMessage('🚀 Starting automation on server...');
 
       // Debug: Log the userData to see what we're getting
       console.log('🔍 Debug - userData received:', userData);
@@ -35,14 +75,14 @@ const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
 
       const response = await api.post('/torrent-automation/start-automation', requestData);
 
-      console.log('✅ Automation request sent successfully');
+      console.log('✅ Server automation request sent successfully');
       console.log('📥 Response received:', response.data);
 
       const automationResult = response.data;
 
       if (automationResult.success) {
         setAutomationStatus('completed');
-        setStatusMessage('🎉 Application submitted successfully to Torrent Power!');
+        setStatusMessage('🎉 Application submitted successfully on server!');
         setResult(automationResult);
         
         if (onComplete) {
@@ -50,12 +90,12 @@ const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
         }
       } else {
         setAutomationStatus('failed');
-        setStatusMessage(`❌ Automation failed: ${automationResult.message}`);
+        setStatusMessage(`❌ Server automation failed: ${automationResult.message}`);
         setResult(automationResult);
       }
 
     } catch (error) {
-      console.error('❌ Automation error:', error);
+      console.error('❌ Server automation error:', error);
       setAutomationStatus('failed');
       
       // Show user-friendly error messages
@@ -75,7 +115,7 @@ const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
       setResult({
         success: false,
         error: errorMessage,
-        message: 'Automation Failed'
+        message: 'Server Automation Failed'
       });
     }
   };
@@ -126,6 +166,46 @@ const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
         {/* Content */}
         <div className="p-6">
           
+          {/* Automation Type Selection */}
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800 mb-3">Choose Automation Method:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <button
+                onClick={() => setAutomationType('client')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  automationType === 'client' 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Monitor className="w-6 h-6 text-blue-600" />
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-800">Your Laptop</div>
+                    <div className="text-sm text-gray-600">Chrome opens on your computer</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => setAutomationType('server')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  automationType === 'server' 
+                    ? 'border-purple-500 bg-purple-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Server className="w-6 h-6 text-purple-600" />
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-800">Server (EC2)</div>
+                    <div className="text-sm text-gray-600">Chrome opens on server</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Status Display */}
           <div className="mb-4">
             <div className={`p-4 rounded-lg border ${
@@ -203,11 +283,15 @@ const TorrentPowerAutomation = ({ userData, onComplete, onClose }) => {
           <div className="flex gap-3">
             {automationStatus === 'idle' && (
               <button
-                onClick={startAutomation}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-colors flex items-center justify-center gap-2"
+                onClick={automationType === 'client' ? startClientAutomation : startServerAutomation}
+                className={`flex-1 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                  automationType === 'client' 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+                    : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800'
+                }`}
               >
                 <Play className="w-4 h-4" />
-                Start Auto-fill
+                {automationType === 'client' ? 'Start Auto-fill on Your Laptop' : 'Start Auto-fill on Server'}
               </button>
             )}
             
