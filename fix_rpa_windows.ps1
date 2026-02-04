@@ -81,7 +81,7 @@ Write-Host ""
 Write-Host "🔍 Step 4: Testing RPA setup..." -ForegroundColor Yellow
 
 # Test RPA setup
-$testScript = @"
+$testScript = @'
 import sys
 import os
 sys.path.append('.')
@@ -137,7 +137,7 @@ try:
 except Exception as e:
     print(f'❌ RPA test failed: {e}')
     sys.exit(1)
-"@
+'@
 
 $testScript | python
 $testResult = $LASTEXITCODE
