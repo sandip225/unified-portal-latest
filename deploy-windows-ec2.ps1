@@ -50,19 +50,19 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 
 # Step 3: Clone Repository
 Write-Host "📥 Cloning Repository..." -ForegroundColor Cyan
-cd C:\
+Set-Location C:\
 if (Test-Path "C:\rpa-gov-portal") {
     Write-Host "Repository already exists, pulling latest changes..." -ForegroundColor Yellow
-    cd C:\rpa-gov-portal
+    Set-Location C:\rpa-gov-portal
     git pull origin main
 } else {
     git clone https://github.com/Vaidehip0407/rpa-gov-portal.git
-    cd C:\rpa-gov-portal
+    Set-Location C:\rpa-gov-portal
 }
 
 # Step 4: Setup Backend
 Write-Host "🐍 Setting up Backend..." -ForegroundColor Cyan
-cd backend
+Set-Location backend
 
 # Install Python dependencies
 Write-Host "Installing Python dependencies..." -ForegroundColor Yellow
@@ -70,19 +70,20 @@ pip install -r requirements.txt
 
 # Create .env file
 Write-Host "Creating .env file..." -ForegroundColor Yellow
-@"
+$envContent = @"
 DATABASE_URL=sqlite:///./unified_portal.db
 SECRET_KEY=rpa-gov-portal-secret-key-2024
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 APP_NAME=RPA Government Portal
 ALGORITHM=HS256
-"@ | Out-File -FilePath ".env" -Encoding UTF8
+"@
+$envContent | Out-File -FilePath ".env" -Encoding UTF8
 
 Write-Host "✅ Backend setup complete" -ForegroundColor Green
 
 # Step 5: Setup Frontend
 Write-Host "🎨 Setting up Frontend..." -ForegroundColor Cyan
-cd ..\frontend
+Set-Location ..\frontend
 
 # Install Node dependencies
 Write-Host "Installing Node dependencies..." -ForegroundColor Yellow
@@ -104,7 +105,7 @@ Write-Host "✅ Firewall configured" -ForegroundColor Green
 Write-Host "📝 Creating startup scripts..." -ForegroundColor Cyan
 
 # Backend startup script
-@"
+$backendScript = @"
 @echo off
 cd C:\rpa-gov-portal\backend
 echo 🚀 Starting RPA Government Portal Backend...
@@ -113,10 +114,11 @@ echo API Docs: http://34.228.199.241:8000/docs
 echo.
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 pause
-"@ | Out-File -FilePath "C:\rpa-gov-portal\start-backend.bat" -Encoding UTF8
+"@
+$backendScript | Out-File -FilePath "C:\rpa-gov-portal\start-backend.bat" -Encoding UTF8
 
 # Frontend startup script
-@"
+$frontendScript = @"
 @echo off
 cd C:\rpa-gov-portal\frontend
 echo 🎨 Starting RPA Government Portal Frontend...
@@ -124,10 +126,11 @@ echo Frontend will be available at: http://34.228.199.241:3003
 echo.
 npm run preview -- --host 0.0.0.0 --port 3003
 pause
-"@ | Out-File -FilePath "C:\rpa-gov-portal\start-frontend.bat" -Encoding UTF8
+"@
+$frontendScript | Out-File -FilePath "C:\rpa-gov-portal\start-frontend.bat" -Encoding UTF8
 
 # Combined startup script
-@"
+$portalScript = @"
 @echo off
 echo 🚀 STARTING RPA GOVERNMENT PORTAL
 echo ================================
@@ -161,7 +164,8 @@ echo 3. Register/Login to portal
 echo 4. Test RPA automation!
 echo.
 pause
-"@ | Out-File -FilePath "C:\rpa-gov-portal\start-portal.bat" -Encoding UTF8
+"@
+$portalScript | Out-File -FilePath "C:\rpa-gov-portal\start-portal.bat" -Encoding UTF8
 
 Write-Host "✅ Startup scripts created" -ForegroundColor Green
 
