@@ -1,0 +1,178 @@
+# EC2 Deployment Commands for Gujarat Unified Services Portal
+# EC2 IP: 18.207.167.97
+# Repository: https://github.com/Vaidehip0407/gujarat-unified-services-portal
+
+# ============================================
+# STEP 1: Connect to EC2
+# ============================================
+ssh -i your-key.pem ubuntu@18.207.167.97
+
+# ============================================
+# STEP 2: Update System & Install Dependencies
+# ============================================
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker ubuntu
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Install Git
+sudo apt install git -y
+
+# Logout and login again for docker group to take effect
+exit
+ssh -i your-key.pem ubuntu@18.207.167.97
+
+# ============================================
+# STEP 3: Clone Repository
+# ============================================
+cd /home/ubuntu
+git clone https://github.com/Vaidehip0407/gujarat-unified-services-portal.git
+cd gujarat-unified-services-portal
+
+# ============================================
+# STEP 4: Create Production Environment Files
+# ============================================
+
+# Backend .env.prod
+cat > backend/.env.prod << 'EOF'
+APP_NAME=Gujarat Unified Services Portal
+DATABASE_URL=sqlite:///./unified_portal.db
+SECRET_KEY=CHANGE_THIS_TO_SECURE_RANDOM_STRING_IN_PRODUCTION
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+HOST=0.0.0.0
+PORT=8000
+FRONTEND_URL=http://18.207.167.97
+BACKEND_CORS_ORIGINS=["http://18.207.167.97","http://18.207.167.97:3003"]
+ENVIRONMENT=production
+DEBUG=false
+WHATSAPP_VERIFY_TOKEN=my_secure_token_2024
+RPA_MODE=DEMO
+DEMO_BASE_URL=http://localhost:8000/demo-govt
+EOF
+
+# ============================================
+# STEP 5: Build and Start Docker Containers
+# ============================================
+
+# Option 1: Using docker-compose.yml (Development)
+docker-compose build
+docker-compose up -d
+
+# Option 2: Using docker-compose.prod.yml (Production - Recommended)
+docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml up -d
+
+# Check status
+docker-compose ps
+docker-compose logs -f
+
+# ============================================
+# STEP 6: Verify Deployment
+# ============================================
+curl http://localhost:8000/health
+curl http://localhost:3003
+
+# From your local machine:
+curl http://18.207.167.97:8000/health
+curl http://18.207.167.97:3003
+
+# ============================================
+# STEP 7: Configure Auto-Start
+# ============================================
+sudo nano /etc/systemd/system/gujarat-portal.service
+
+# Paste this:
+[Unit]
+Description=Gujarat Unified Services Portal
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/ubuntu/gujarat-unified-services-portal
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.prod.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.prod.yml down
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable service
+sudo systemctl daemon-reload
+sudo systemctl enable gujarat-portal
+sudo systemctl start gujarat-portal
+
+# ============================================
+# USEFUL COMMANDS
+# ============================================
+
+# View logs
+docker-compose logs -f
+docker-compose logs -f backend
+docker-compose logs -f frontend
+
+# Restart services
+docker-compose restart
+
+# Stop services
+docker-compose down
+
+# Update deployment
+cd /home/ubuntu/gujarat-unified-services-portal
+git pull origin main
+docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose -f docker-compose.prod.yml up -d
+
+# Check status
+docker-compose ps
+docker stats
+
+# Clean up old images
+docker image prune -a -f
+
+# ============================================
+# ACCESS URLS
+# ============================================
+Frontend: http://18.207.167.97:3003
+Backend API: http://18.207.167.97:8000
+API Docs: http://18.207.167.97:8000/docs
+Health Check: http://18.207.167.97:8000/health
+
+# ============================================
+# AWS SECURITY GROUP SETTINGS
+# ============================================
+# Add these inbound rules in AWS Console:
+# - HTTP (80) from 0.0.0.0/0
+# - HTTPS (443) from 0.0.0.0/0
+# - SSH (22) from Your IP
+# - Custom TCP (8000) from 0.0.0.0/0
+# - Custom TCP (3003) from 0.0.0.0/0
+
+# ============================================
+# TROUBLESHOOTING
+# ============================================
+
+# If containers fail to start:
+docker-compose down
+docker system prune -a -f
+docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose -f docker-compose.prod.yml up -d
+
+# Check logs for errors:
+docker-compose logs backend
+docker-compose logs frontend
+
+# Check if ports are in use:
+sudo netstat -tulpn | grep :8000
+sudo netstat -tulpn | grep :3003
+
+# Restart Docker service:
+sudo systemctl restart docker

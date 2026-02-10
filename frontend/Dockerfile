@@ -2,6 +2,10 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Accept build arguments
+ARG VITE_API_URL=http://localhost:8000
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files
 COPY package*.json ./
 
@@ -23,8 +27,8 @@ FROM nginx:alpine
 # Copy built files to nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx config if exists
+COPY nginx.conf /etc/nginx/conf.d/default.conf 2>/dev/null || true
 
 # Expose port
 EXPOSE 80
