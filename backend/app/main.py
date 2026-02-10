@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import auth, users, services, applications, demo_government_simple as demo_government, services_api, whatsapp, documents, services_data, portal_redirect, torrent_power, torrent_automation, proxy
+from app.routers import auth, users, services, applications, services_api, whatsapp, documents, services_data, portal_redirect, proxy
 from app.config import get_settings
 
 settings = get_settings()
@@ -11,14 +11,14 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Unified Portal for Gas, Electricity, Water & Property Services with Chrome Extension Automation",
+    description="Unified Portal for Gas, Electricity, Water & Property Services",
     version="1.0.0"
 )
 
-# CORS middleware - More permissive for localhost development
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for localhost development
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,10 +33,7 @@ app.include_router(services_data.router)
 app.include_router(portal_redirect.router)
 app.include_router(applications.router)
 app.include_router(documents.router)
-app.include_router(demo_government.router)
 app.include_router(whatsapp.router)
-app.include_router(torrent_power.router)
-app.include_router(torrent_automation.router)
 app.include_router(proxy.router)
 
 @app.get("/")
