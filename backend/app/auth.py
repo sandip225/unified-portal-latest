@@ -26,7 +26,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 def get_password_hash(password: str) -> str:
-    # Use faster salt rounds for development (4 instead of default 12)
+    # Use minimal salt rounds for faster hashing (4 rounds = ~50ms)
+    # Production should use 10-12 rounds for better security
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(rounds=4)).decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
