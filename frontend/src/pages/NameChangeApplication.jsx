@@ -3,7 +3,7 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import {
   Zap, Flame, Droplets, Building, ArrowLeft, Upload,
   User, Phone, Mail, MapPin, FileText, Calendar,
-  AlertCircle, CheckCircle, Info, Sparkles
+  AlertCircle, CheckCircle, Info, Sparkles, Play
 } from 'lucide-react';
 import axios from '../api/axios';
 
