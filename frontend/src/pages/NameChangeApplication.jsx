@@ -692,12 +692,13 @@ const NameChangeApplication = () => {
           <div className="flex items-center gap-4">
             {providerId === 'torrent-power' && provider.aiSupported ? (
               <button
-                type="submit"
+                type="button"
+                onClick={handleAutoFill}
                 disabled={loading}
-                className="px-8 py-3 rounded-lg font-bold transition-all duration-300 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-8 py-3 rounded-lg font-bold transition-all duration-300 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Play className="w-5 h-5" />
-                Start
+                {loading ? 'Processing...' : 'Start'}
               </button>
             ) : (
               <button
