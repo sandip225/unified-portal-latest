@@ -64,7 +64,7 @@ const Layout = () => {
               {/* Logo & Title */}
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-md border border-gray-200">
-                  <img src="/ashoka-emblem.webp" alt="Ashoka Emblem" className="w-10 h-10 object-contain" />
+                  <img src="/portal/ashoka-emblem.webp" alt="Ashoka Emblem" className="w-10 h-10 object-contain" />
                 </div>
                 <div>
                   <h1 className="text-xl md:text-2xl font-bold text-gray-800">
@@ -218,3 +218,4 @@ const Layout = () => {
 };
 
 export default Layout;
+
