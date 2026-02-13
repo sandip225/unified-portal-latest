@@ -328,7 +328,7 @@ const NameChangeApplication = () => {
     try {
       alert('🚀 Starting Live Automation...\n\nA browser window will open shortly. Please watch the process and manually log in if required.');
 
-      await axios.post('/api/torrent-power/start-live-fill', {
+      await axios.post('/torrent-power/start-live-fill', {
         form_data: dataToFill
       });
 
