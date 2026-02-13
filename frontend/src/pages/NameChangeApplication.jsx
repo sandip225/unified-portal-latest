@@ -490,15 +490,15 @@ const NameChangeApplication = () => {
         </div>
       )}
 
-      {/* Completion Summary Modal - Success/Failure View */}
+      {/* Completion Summary Modal - Exact Design */}
       {automationCompleted && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Zap className="w-6 h-6" />
-                <h2 className="text-xl font-bold">Torrent Power | Name Change Application</h2>
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5" />
+                <h2 className="text-lg font-bold">Torrent Power | Name Change Application</h2>
               </div>
               <button
                 onClick={() => {
@@ -507,77 +507,66 @@ const NameChangeApplication = () => {
                   setAutomationLogs([]);
                   setAutomationProgress(0);
                 }}
-                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors text-2xl"
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-8 space-y-6 max-h-96 overflow-y-auto">
+            <div className="p-8 space-y-6">
               {/* Title */}
-              <h3 className="text-3xl font-bold text-gray-800 text-center">
-                {automationResult?.success
-                  ? 'Application Submitted Successfully'
-                  : 'Application Submitted Successfully'}
+              <h3 className="text-3xl font-bold text-gray-900 text-center">
+                Application Submitted Successfully
               </h3>
 
-              {/* Filled Fields List */}
-              <div className="space-y-3 bg-gray-50 p-6 rounded-lg">
-                <div className="flex items-center gap-3">
+              {/* Filled Fields List - Exact spacing and styling */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">City</span>
+                  <span className="text-gray-700 text-base">City</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">Service Number</span>
+                  <span className="text-gray-700 text-base">Service Number</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">T Number</span>
+                  <span className="text-gray-700 text-base">T Number</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">Mobile Number</span>
+                  <span className="text-gray-700 text-base">Mobile Number</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">Email</span>
+                  <span className="text-gray-700 text-base">Email</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium bg-blue-200 px-3 py-1 rounded inline-block">
+                  <span className="text-white text-base bg-blue-500 px-3 py-1 rounded">
                     Form filled successfully
                   </span>
                 </div>
               </div>
 
-              {/* Status Message */}
-              {automationResult?.success ? (
-                <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-green-800">Application Submitted</p>
-                      <p className="text-sm text-green-700 mt-1">
-                        Your name change request has been successfully submitted to Torrent Power.
-                      </p>
-                    </div>
+              {/* Divider */}
+              <div className="border-t border-gray-200"></div>
+
+              {/* Status Message - Red for demo/failure */}
+              <div className="bg-red-50 border border-red-200 rounded-lg p-5">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-red-800 text-base">
+                      Application has not been submitted due to incorrect data.
+                    </p>
+                    <p className="text-sm text-red-700 mt-2">
+                      This is a demo with dummy data. The form was filled but not submitted to Torrent Power.
+                    </p>
                   </div>
                 </div>
-              ) : (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-red-800">Application has not been submitted due to incorrect data.</p>
-                      <p className="text-sm text-red-700 mt-1">
-                        This is a demo with dummy data. The form was filled but not submitted to Torrent Power.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+              </div>
 
               {/* Action Button */}
               <div className="flex justify-center pt-4">
@@ -588,7 +577,7 @@ const NameChangeApplication = () => {
                     setAutomationLogs([]);
                     setAutomationProgress(0);
                   }}
-                  className="px-12 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+                  className="px-16 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold text-base hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
                 >
                   OK
                 </button>
