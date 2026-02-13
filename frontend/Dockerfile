@@ -1,10 +1,11 @@
 FROM node:18-alpine AS builder
-
 WORKDIR /app
 
 # Accept build arguments
 ARG VITE_API_URL=http://localhost:8000
+ARG VITE_BASE_PATH=/
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 
 # Copy package files
 COPY package*.json ./
@@ -15,8 +16,8 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application with base path
+RUN VITE_BASE_PATH=$VITE_BASE_PATH npm run build
 
 # Copy public folder images to dist root
 RUN cp public/*.{jpg,jpeg,png,gif,svg,webp} dist/ 2>/dev/null || true
@@ -27,7 +28,7 @@ FROM nginx:alpine
 # Copy built files to nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Create default nginx config
+# Create default nginx config with base path support
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \

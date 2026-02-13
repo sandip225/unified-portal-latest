@@ -47,7 +47,7 @@ const Register = () => {
         <div className="text-center mb-8">
           <div className="w-20 h-20 mx-auto mb-4">
             <img 
-              src="/ashoka-emblem.webp" 
+              src="/portal/ashoka-emblem.webp" 
               alt="Government of India" 
               className="w-full h-full object-contain"
               onError={(e) => {
