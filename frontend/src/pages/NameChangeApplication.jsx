@@ -490,15 +490,15 @@ const NameChangeApplication = () => {
         </div>
       )}
 
-      {/* Completion Summary Modal - Exact Design */}
+      {/* Completion Summary Modal - Exact Design with Fixed Size */}
       {automationCompleted && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md h-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl flex items-center justify-between">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-5 rounded-t-xl flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5" />
-                <h2 className="text-lg font-bold">Torrent Power | Name Change Application</h2>
+                <h2 className="text-base font-bold">Torrent Power | Name Change Application</h2>
               </div>
               <button
                 onClick={() => {
@@ -507,44 +507,44 @@ const NameChangeApplication = () => {
                   setAutomationLogs([]);
                   setAutomationProgress(0);
                 }}
-                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-7 h-7 flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-8 space-y-6">
+            {/* Modal Body - Fixed height, no scroll */}
+            <div className="p-6 space-y-4">
               {/* Title */}
-              <h3 className="text-3xl font-bold text-gray-900 text-center">
+              <h3 className="text-2xl font-bold text-gray-900 text-center">
                 Application Submitted Successfully
               </h3>
 
-              {/* Filled Fields List - Exact spacing and styling */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 text-base">City</span>
+              {/* Filled Fields List - Compact spacing */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">City</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 text-base">Service Number</span>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Service Number</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 text-base">T Number</span>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">T Number</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 text-base">Mobile Number</span>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Mobile Number</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700 text-base">Email</span>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">Email</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="text-white text-base bg-blue-500 px-3 py-1 rounded">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-white text-xs bg-blue-500 px-2 py-1 rounded">
                     Form filled successfully
                   </span>
                 </div>
@@ -553,15 +553,15 @@ const NameChangeApplication = () => {
               {/* Divider */}
               <div className="border-t border-gray-200"></div>
 
-              {/* Status Message - Red for demo/failure */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-5">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+              {/* Status Message - Compact */}
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-red-800 text-base">
+                    <p className="font-semibold text-red-800 text-sm">
                       Application has not been submitted due to incorrect data.
                     </p>
-                    <p className="text-sm text-red-700 mt-2">
+                    <p className="text-xs text-red-700 mt-1">
                       This is a demo with dummy data. The form was filled but not submitted to Torrent Power.
                     </p>
                   </div>
@@ -569,7 +569,7 @@ const NameChangeApplication = () => {
               </div>
 
               {/* Action Button */}
-              <div className="flex justify-center pt-4">
+              <div className="flex justify-center pt-2">
                 <button
                   onClick={() => {
                     setShowAutomation(false);
@@ -577,7 +577,7 @@ const NameChangeApplication = () => {
                     setAutomationLogs([]);
                     setAutomationProgress(0);
                   }}
-                  className="px-16 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold text-base hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
+                  className="px-12 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
                 >
                   OK
                 </button>
