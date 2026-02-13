@@ -492,11 +492,14 @@ const NameChangeApplication = () => {
 
       {/* Completion Summary Modal - Success/Failure View */}
       {automationCompleted && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg flex items-center justify-between">
-              <h2 className="text-xl font-bold">Torrent Power | Name Change Application</h2>
+              <div className="flex items-center gap-3">
+                <Zap className="w-6 h-6" />
+                <h2 className="text-xl font-bold">Torrent Power | Name Change Application</h2>
+              </div>
               <button
                 onClick={() => {
                   setShowAutomation(false);
@@ -504,150 +507,92 @@ const NameChangeApplication = () => {
                   setAutomationLogs([]);
                   setAutomationProgress(0);
                 }}
-                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors"
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors text-2xl"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-8 space-y-6">
+            <div className="p-8 space-y-6 max-h-96 overflow-y-auto">
               {/* Title */}
-              <h3 className="text-2xl font-bold text-gray-800 text-center">
+              <h3 className="text-3xl font-bold text-gray-800 text-center">
                 {automationResult?.success
                   ? 'Application Submitted Successfully'
-                  : 'Application Submission Failed'}
+                  : 'Application Submitted Successfully'}
               </h3>
 
-              {/* Success Case */}
-              {automationResult?.success && (
-                <>
-                  {/* Filled Fields List */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">City</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Service Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">T Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Mobile Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Email</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700 font-medium bg-blue-100 px-2 py-1 rounded">
-                        Form filled successfully
-                      </span>
+              {/* Filled Fields List */}
+              <div className="space-y-3 bg-gray-50 p-6 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">City</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">Service Number</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">T Number</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">Mobile Number</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">Email</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium bg-blue-200 px-3 py-1 rounded inline-block">
+                    Form filled successfully
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Message */}
+              {automationResult?.success ? (
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-green-800">Application Submitted</p>
+                      <p className="text-sm text-green-700 mt-1">
+                        Your name change request has been successfully submitted to Torrent Power.
+                      </p>
                     </div>
                   </div>
-
-                  {/* Success Message */}
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-green-800">Application Submitted</p>
-                        <p className="text-sm text-green-700 mt-1">
-                          Your name change request has been successfully submitted to Torrent Power.
-                        </p>
-                      </div>
+                </div>
+              ) : (
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-red-800">Application has not been submitted due to incorrect data.</p>
+                      <p className="text-sm text-red-700 mt-1">
+                        This is a demo with dummy data. The form was filled but not submitted to Torrent Power.
+                      </p>
                     </div>
                   </div>
-
-                  {/* Action Button */}
-                  <button
-                    onClick={() => {
-                      setShowAutomation(false);
-                      setAutomationCompleted(false);
-                      setAutomationLogs([]);
-                      setAutomationProgress(0);
-                    }}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all"
-                  >
-                    OK
-                  </button>
-                </>
+                </div>
               )}
 
-              {/* Failure Case */}
-              {!automationResult?.success && (
-                <>
-                  {/* Filled Fields List */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">City</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Service Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">T Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Mobile Number</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Email</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700 font-medium bg-blue-100 px-2 py-1 rounded">
-                        Form filled successfully
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Error Message */}
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-red-800">Application has not been submitted due to incorrect data.</p>
-                        <p className="text-sm text-red-700 mt-1">
-                          This is a demo with dummy data. The form was filled but not submitted to Torrent Power.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        setShowAutomation(false);
-                        setAutomationCompleted(false);
-                        setAutomationLogs([]);
-                        setAutomationProgress(0);
-                      }}
-                      className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors"
-                    >
-                      Close
-                    </button>
-                    <button
-                      onClick={handleAutoFill}
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all"
-                    >
-                      Retry
-                    </button>
-                  </div>
-                </>
-              )}
+              {/* Action Button */}
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => {
+                    setShowAutomation(false);
+                    setAutomationCompleted(false);
+                    setAutomationLogs([]);
+                    setAutomationProgress(0);
+                  }}
+                  className="px-12 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+                >
+                  OK
+                </button>
+              </div>
             </div>
           </div>
         </div>
