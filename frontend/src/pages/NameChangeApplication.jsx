@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import {
   Zap, Flame, Droplets, Building, ArrowLeft, Upload,
-  User, Phone, Mail, MapPin, FileText, Calendar,
-  AlertCircle, CheckCircle, Info, Sparkles, Play
+  User, Phone, FileText,
+  AlertCircle, CheckCircle, Info, Play
 } from 'lucide-react';
 import axios from '../api/axios';
 
@@ -49,7 +49,6 @@ const NameChangeApplication = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showAutomation, setShowAutomation] = useState(false);
   const [automationCompleted, setAutomationCompleted] = useState(false);
   const [automationResult, setAutomationResult] = useState(null);
 
@@ -269,7 +268,6 @@ const NameChangeApplication = () => {
 
     // Check if this is Torrent Power with AI automation
     if (providerId === 'torrent-power' && provider.aiSupported) {
-      setShowAutomation(true);
       return;
     }
 
@@ -290,26 +288,6 @@ const NameChangeApplication = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAutomationComplete = (result) => {
-    console.log('Automation completed:', result);
-    setAutomationResult(result);
-    setAutomationCompleted(true);
-    setShowAutomation(false);
-    
-    if (result.success) {
-      // Show success message
-      setTimeout(() => {
-        alert(`🎉 Application Submitted Successfully!\n\nYour name change request has been submitted to Torrent Power.\n\n✅ What happened:\n• Chrome browser opened automatically\n• Form was filled with your data\n• Application was submitted successfully\n\n📧 Next Steps:\n• You will receive a confirmation email shortly\n• Track your application on Torrent Power portal\n• Keep your reference number safe`);
-      }, 500);
-    } else {
-      alert(`❌ Automation Failed!\n\n${result.error || result.message}\n\nPlease try the manual option or contact support.`);
-    }
-  };
-
-  const handleCloseAutomation = () => {
-    setShowAutomation(false);
   };
 
   const handleAutoFill = async () => {
